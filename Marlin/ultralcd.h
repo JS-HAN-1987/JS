@@ -6,7 +6,7 @@
 #ifdef ULTRA_LCD
   int lcd_strlen(char *s);
   int lcd_strlen_P(const char *s);
-  void lcd_update(0);
+  void lcd_update();
   void lcd_init();
   void lcd_setstatus(const char* message);
   void lcd_setstatuspgm(const char* message);
@@ -28,7 +28,7 @@
   #define LCD_TIMEOUT_TO_STATUS 15000
 
   #ifdef ULTIPANEL
-  void lcd_buttons_update(0);
+  void lcd_buttons_update();
   extern volatile uint8_t buttons;  //the last checked buttons in a bit array.
   #ifdef REPRAPWORLD_KEYPAD
     extern volatile uint8_t buttons_reprapworld_keypad; // to store the keypad shift register values

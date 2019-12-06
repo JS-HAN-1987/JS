@@ -1331,7 +1331,7 @@ void lcd_init()
 #ifdef LCD_HAS_SLOW_BUTTONS
     slow_buttons = 0;
 #endif
-    lcd_buttons_update(0);
+    lcd_buttons_update();
 #ifdef ULTIPANEL
     encoderDiff = 0;
 #endif
@@ -1357,7 +1357,7 @@ int lcd_strlen_P(const char *s) {
 
 
 
-void lcd_update(0)
+void lcd_update()
 {
     static unsigned long timeoutToStatus = 0;
 
@@ -1365,7 +1365,7 @@ void lcd_update(0)
     slow_buttons = lcd_implementation_read_slow_buttons(); // buttons which take too long to read in interrupt context
     #endif
 
-    lcd_buttons_update(0);
+    lcd_buttons_update();
 
     #if (SDCARDDETECT > 0)
     if((IS_SD_INSERTED != lcd_oldcardstatus && lcd_detected()))
