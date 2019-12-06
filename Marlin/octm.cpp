@@ -24,9 +24,9 @@
 #include "oc_tooldetector.h"
 
 #ifdef UI_V2
-#include "new_icons/icons.h"
+#include "icons.h"
 #else
-#include "icon/oc_icon.h"
+#include "oc_icon.h"
 #endif
 
 #define xFOR_MANUAL
