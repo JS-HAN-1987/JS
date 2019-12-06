@@ -212,6 +212,9 @@ int extruder_multiply[EXTRUDERS] = {100
     , 100
     #if EXTRUDERS > 2
       , 100
+	    #if EXTRUDERS > 3
+      	, 100
+	    #endif
     #endif
   #endif
 };
@@ -221,6 +224,9 @@ float filament_size[EXTRUDERS] = { DEFAULT_NOMINAL_FILAMENT_DIA
       , DEFAULT_NOMINAL_FILAMENT_DIA
     #if EXTRUDERS > 2
        , DEFAULT_NOMINAL_FILAMENT_DIA
+      #if EXTRUDERS > 3
+        , DEFAULT_NOMINAL_FILAMENT_DIA
+      #endif
     #endif
   #endif
 };
@@ -229,6 +235,9 @@ float volumetric_multiplier[EXTRUDERS] = {1.0
     , 1.0
     #if EXTRUDERS > 2
       , 1.0
+      #if EXTRUDERS > 3
+        , 1.0
+      #endif
     #endif
   #endif
 };
@@ -369,6 +378,8 @@ static int serial_count = 0;
 static boolean comment_mode = false;
 static char *strchr_pointer; // just a pointer to find chars in the command string like X, Y, Z, E, etc
 
+const char* queued_commands_P = NULL; /* pointer to the current line in the active sequence of commands, or NULL when none */
+
 const int sensitive_pins[] = SENSITIVE_PINS; // Sensitive pin list for M42
 
 //static float tt = 0;
@@ -436,38 +447,63 @@ void serial_echopair_P(const char *s_P, unsigned long v)
   }
 #endif //!SDSUPPORT
 
-//adds an command to the main command buffer
-//thats really done in a non-safe way.
-//needs overworking someday
-void enquecommand(const char *cmd)
+//Injects the next command from the pending sequence of commands, when possible
+//Return false if and only if no command was pending
+static bool drain_queued_commands_P()
 {
-  if(buflen < BUFSIZE)
+  char cmd[30];
+  if(!queued_commands_P)
+    return false;
+  // Get the next 30 chars from the sequence of gcodes to run
+  strncpy_P(cmd, queued_commands_P, sizeof(cmd)-1);
+  cmd[sizeof(cmd)-1]= 0;
+  // Look for the end of line, or the end of sequence
+  size_t i= 0;
+  char c;
+  while( (c= cmd[i]) && c!='\n' )
+    ++i; // look for the end of this gcode command
+  cmd[i]= 0;
+  if(enquecommand(cmd)) // buffer was not full (else we will retry later)
   {
-    //this is dangerous if a mixing of serial and this happens
-    strcpy(&(cmdbuffer[bufindw][0]),cmd);
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPGM(MSG_Enqueing);
-    SERIAL_ECHO(cmdbuffer[bufindw]);
-    SERIAL_ECHOLNPGM("\"");
-    bufindw= (bufindw + 1)%BUFSIZE;
-    buflen += 1;
+    if(c)
+      queued_commands_P+= i+1; // move to next command
+    else
+      queued_commands_P= NULL; // will have no more commands in the sequence
   }
+  return true;
 }
 
-void enquecommand_P(const char *cmd)
+//Record one or many commands to run from program memory.
+//Aborts the current queue, if any.
+//Note: drain_queued_commands_P() must be called repeatedly to drain the commands afterwards
+void enquecommands_P(const char* pgcode)
 {
-  if(buflen < BUFSIZE)
-  {
-    //this is dangerous if a mixing of serial and this happens
-    strcpy_P(&(cmdbuffer[bufindw][0]),cmd);
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPGM(MSG_Enqueing);
-    SERIAL_ECHO(cmdbuffer[bufindw]);
-    SERIAL_ECHOLNPGM("\"");
-    bufindw= (bufindw + 1)%BUFSIZE;
-    buflen += 1;
-  }
+    queued_commands_P= pgcode;
+    drain_queued_commands_P(); // first command exectuted asap (when possible)
 }
+
+//adds a single command to the main command buffer, from RAM
+//that is really done in a non-safe way.
+//needs overworking someday
+//Returns false if it failed to do so
+bool enquecommand(const char *cmd)
+{
+  if(*cmd==';')
+    return false;
+  if(buflen >= BUFSIZE)
+    return false;
+  //this is dangerous if a mixing of serial and this happens
+  strcpy(&(cmdbuffer[bufindw][0]),cmd);
+  SERIAL_ECHO_START;
+  SERIAL_ECHOPGM(MSG_Enqueing);
+  SERIAL_ECHO(cmdbuffer[bufindw]);
+  SERIAL_ECHOLNPGM("\"");
+  bufindw= (bufindw + 1)%BUFSIZE;
+  buflen += 1;
+  return true;
+}
+
+
 
 void setup_killpin()
 {

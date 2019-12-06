@@ -34,7 +34,7 @@
 
 // Arduino < 1.0.0 does not define this, so we need to do it ourselves
 #ifndef analogInputToDigitalPin
-# define analogInputToDigitalPin(p) ((p) + A0)
+# define analogInputToDigitalPin(p) ((p) + 0xA0)
 #endif
 
 #ifdef AT90USB
@@ -62,6 +62,32 @@
   #define MYSERIAL MSerial
 #endif
 
+// LOG /////////////////////////////////////////////////////////////////////
+#define xOC_DEBUG
+#ifdef OC_DEBUG
+#define LOG(fmt, ...) kb_log(__FILE__, __LINE__, PSTR(fmt), __VA_ARGS__)
+//#define LOGP(x) (kb_log_pgm(__FILE__,__LINE__, PSTR(x)))
+#define LOGP(x) LOG(x, "")
+#else
+#define LOG(...)
+#define LOGP(x)
+#endif
+
+#define LT_OK     "|OK|"
+#define LT_ERR    "|ERR|"
+#define LT_WARN   "|WRN|"
+#define LT_NOTE   "|NOTE|"
+#define LT_API    "|API|"
+#define LT_API2   "|API2|"
+#define LT_SVC    "|SVC|"
+#define LT_EVT    "|EVT|"
+#define LT_LOGIC  "|LOGIC|"
+
+void kb_log(const char *file, int line, const char *fmt, ...); // in tft_lib.c
+void kb_log_pgm(const char *file, int line, const char *str);
+
+// LOG /////////////////////////////////////////////////////////////////////
+
 #define SERIAL_PROTOCOL(x) (MYSERIAL.print(x))
 #define SERIAL_PROTOCOL_F(x,y) (MYSERIAL.print(x,y))
 #define SERIAL_PROTOCOLPGM(x) (serialprintPGM(PSTR(x)))
@@ -83,9 +109,10 @@ extern const char echomagic[] PROGMEM;
 #define SERIAL_ECHOPGM(x) SERIAL_PROTOCOLPGM(x)
 #define SERIAL_ECHOLN(x) SERIAL_PROTOCOLLN(x)
 #define SERIAL_ECHOLNPGM(x) SERIAL_PROTOCOLLNPGM(x)
-#define SERIAL_EOL SERIAL_ECHOLN("")
 
 #define SERIAL_ECHOPAIR(name,value) (serial_echopair_P(PSTR(name),(value)))
+
+#define SERIAL_EOL SERIAL_ECHOLN("")
 
 void serial_echopair_P(const char *s_P, float v);
 void serial_echopair_P(const char *s_P, double v);
@@ -179,7 +206,6 @@ void manage_inactivity(bool ignore_stepper_queue=false);
 #define disable_e3() /* nothing */
 #endif
 
-
 enum AxisEnum {X_AXIS=0, Y_AXIS=1, Z_AXIS=2, E_AXIS=3, X_HEAD=4, Y_HEAD=5};
 
 
@@ -201,8 +227,9 @@ void Stop();
 
 bool IsStopped();
 
-void enquecommand(const char *cmd); //put an ASCII command at the end of the current buffer.
-void enquecommand_P(const char *cmd); //put an ASCII command at the end of the current buffer, read from flash
+bool enquecommand(const char *cmd); //put a single ASCII command at the end of the current buffer or return false when it is full
+void enquecommands_P(const char *cmd); //put one or many ASCII commands at the end of the current buffer, read from flash
+
 void prepare_arc_move(char isclockwise);
 void clamp_to_software_endstops(float target[3]);
 
