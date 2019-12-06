@@ -22,6 +22,7 @@
    and Philipp Tiefenbacher. */
 
 #include "Marlin.h"
+#include "oc_lut_but.h"
 #include "stepper.h"
 #include "planner.h"
 #include "temperature.h"
@@ -33,7 +34,9 @@
 #include <SPI.h>
 #endif
 
-
+#ifdef OC_SUPPORT_DRYRUN
+extern int oc_dryrun;
+#endif
 //===========================================================================
 //=============================public variables  ============================
 //===========================================================================
@@ -43,7 +46,7 @@ block_t *current_block;  // A pointer to the block currently being traced
 //===========================================================================
 //=============================private variables ============================
 //===========================================================================
-//static makes it inpossible to be called from outside of this file by extern.!
+//static makes it impossible to be called from outside of this file by extern.!
 
 // Variables used by The Stepper Driver Interrupt
 static unsigned char out_bits;        // The next stepping-bits to be output
@@ -55,7 +58,7 @@ volatile static unsigned long step_events_completed; // The number of step event
 #ifdef ADVANCE
   static long advance_rate, advance, final_advance = 0;
   static long old_advance = 0;
-  static long e_steps[3];
+  static long e_steps[4];
 #endif
 static long acceleration_time, deceleration_time;
 //static unsigned long accelerate_until, decelerate_after, acceleration_rate, initial_rate, final_rate, nominal_rate;
@@ -200,6 +203,8 @@ void checkHitEndstops()
      setTargetHotend0(0);
      setTargetHotend1(0);
      setTargetHotend2(0);
+     setTargetHotend3(0);
+     setTargetBed(0);
    }
 #endif
  }
@@ -304,18 +309,28 @@ FORCE_INLINE void trapezoid_generator_reset() {
 //    SERIAL_ECHOPGM("advance rate :");
 //    SERIAL_ECHO(current_block->advance_rate/256.0);
 //    SERIAL_ECHOPGM("initial advance :");
-//  SERIAL_ECHO(current_block->initial_advance/256.0);
+//    SERIAL_ECHO(current_block->initial_advance/256.0);
 //    SERIAL_ECHOPGM("final advance :");
 //    SERIAL_ECHOLN(current_block->final_advance/256.0);
 
 }
 
+extern bool oc_req_pause, oc_req_resume;
+bool oc_paused = false;
+
+#ifdef OC_NPDM
+bool disable_z_min = false;
+#endif
 // "The Stepper Driver Interrupt" - This timer interrupt is the workhorse.
 // It pops blocks from the block_buffer and executes them by pulsing the stepper pins appropriately.
 ISR(TIMER1_COMPA_vect)
 {
   // If there is no current block, attempt to pop one from the buffer
-  if (current_block == NULL) {
+  if (
+  	#ifdef OC_PAUSE
+  	!oc_paused &&
+  	#endif
+  	current_block == NULL) {
     // Anything in the buffer?
     current_block = plan_get_current_block();
     if (current_block != NULL) {
@@ -344,8 +359,15 @@ ISR(TIMER1_COMPA_vect)
     }
   }
 
-  if (current_block != NULL) {
+  if (
+  	//#ifdef OC_PAUSE
+  	//!oc_paused &&
+	//#endif
+  	current_block != NULL) {
     // Set directions TO DO This should be done once during init of trapezoid. Endstops -> interrupt
+#ifdef OC_PAUSE
+if (!oc_paused) {
+#endif
     out_bits = current_block->direction_bits;
 
 
@@ -405,10 +427,11 @@ ISR(TIMER1_COMPA_vect)
 
     // Set direction en check limit switches
     #ifndef COREXY
-    if ((out_bits & (1<<X_AXIS)) != 0) {   // stepping along -X axis
+    if ((out_bits & (1<<X_AXIS)) != 0)   // stepping along -X axis
     #else
-    if ((((out_bits & (1<<X_AXIS)) != 0)&&(out_bits & (1<<Y_AXIS)) != 0)) {   //-X occurs for -A and -B
+    if ((out_bits & (1<<X_HEAD)) != 0)   //AlexBorro: Head direction in -X axis for CoreXY bots.
     #endif
+    {
       CHECK_ENDSTOPS
       {
         #ifdef DUAL_X_CARRIAGE
@@ -429,7 +452,8 @@ ISR(TIMER1_COMPA_vect)
         }
       }
     }
-    else { // +direction
+    else 
+    { // +direction
       CHECK_ENDSTOPS
       {
         #ifdef DUAL_X_CARRIAGE
@@ -452,10 +476,11 @@ ISR(TIMER1_COMPA_vect)
     }
 
     #ifndef COREXY
-    if ((out_bits & (1<<Y_AXIS)) != 0) {   // -direction
+    if ((out_bits & (1<<Y_AXIS)) != 0)   // -direction
     #else
-    if ((((out_bits & (1<<X_AXIS)) != 0)&&(out_bits & (1<<Y_AXIS)) == 0)) {   // -Y occurs for -A and +B
+    if ((out_bits & (1<<Y_HEAD)) != 0)  //AlexBorro: Head direction in -Y axis for CoreXY bots.
     #endif
+    {
       CHECK_ENDSTOPS
       {
         #if defined(Y_MIN_PIN) && Y_MIN_PIN > -1
@@ -469,7 +494,8 @@ ISR(TIMER1_COMPA_vect)
         #endif
       }
     }
-    else { // +direction
+    else 
+    { // +direction
       CHECK_ENDSTOPS
       {
         #if defined(Y_MAX_PIN) && Y_MAX_PIN > -1
@@ -495,7 +521,17 @@ ISR(TIMER1_COMPA_vect)
       CHECK_ENDSTOPS
       {
         #if defined(Z_MIN_PIN) && Z_MIN_PIN > -1
-          bool z_min_endstop=(READ(Z_MIN_PIN) != Z_MIN_ENDSTOP_INVERTING);
+          bool z_min_endstop=((READ(Z_MIN_PIN) != Z_MIN_ENDSTOP_INVERTING)
+          #ifdef OC_NPDM
+		  && (!disable_z_min)
+		  #endif
+          )
+          #ifdef OC_NPDM
+		  	#if defined(NPDM_PIN) && NPDM_PIN > -1
+			|| (READ(NPDM_PIN) != NPDM_ENDSTOP_INVERTING)
+			#endif
+		  #endif
+          ;
           if(z_min_endstop && old_z_min_endstop && (current_block->steps_z > 0)) {
             endstops_trigsteps[Z_AXIS] = count_position[Z_AXIS];
             endstop_z_hit=true;
@@ -558,8 +594,8 @@ ISR(TIMER1_COMPA_vect)
       }
       #endif //ADVANCE
 
-        counter_x += current_block->steps_x;
-        #ifdef CONFIG_STEPPERS_TOSHIBA
+      counter_x += current_block->steps_x;
+#ifdef CONFIG_STEPPERS_TOSHIBA
 	/* The toshiba stepper controller require much longer pulses
 	 * tjerfore we 'stage' decompose the pulses between high, and
 	 * low instead of doing each in turn. The extra tests add enough
@@ -680,17 +716,26 @@ ISR(TIMER1_COMPA_vect)
 
       #ifndef ADVANCE
         counter_e += current_block->steps_e;
-        if (counter_e > 0) {
+        if (counter_e > 0
+			#ifdef OC_SUPPORT_DRYRUN
+			&& !oc_dryrun
+			#endif
+			) {
           WRITE_E_STEP(!INVERT_E_STEP_PIN);
           counter_e -= current_block->step_event_count;
           count_position[E_AXIS]+=count_direction[E_AXIS];
           WRITE_E_STEP(INVERT_E_STEP_PIN);
         }
       #endif //!ADVANCE
-      #endif
+#endif // CONFIG_STEPPERS_TOSHIBA
       step_events_completed += 1;
       if(step_events_completed >= current_block->step_event_count) break;
     }
+
+#ifdef OC_PAUSE
+}
+#endif
+
     // Calculare new timer value
     unsigned short timer;
     unsigned short step_rate;
@@ -758,6 +803,21 @@ ISR(TIMER1_COMPA_vect)
       plan_discard_current_block();
     }
   }
+
+	#ifdef OC_PAUSE
+  if (oc_req_pause) {
+  	oc_paused = true;
+	oc_req_pause = false;
+	void oc_paused_callback(void);
+	oc_paused_callback();
+  }
+  if (oc_req_resume) {
+	void oc_resumed_callback(void);
+	oc_resumed_callback();
+  	oc_paused = false;
+	oc_req_resume = false;
+  }
+	#endif
 }
 
 #ifdef ADVANCE
@@ -768,6 +828,11 @@ ISR(TIMER1_COMPA_vect)
   {
     old_OCR0A += 52; // ~10kHz interrupt (250000 / 26 = 9615kHz)
     OCR0A = old_OCR0A;
+
+	#ifdef OC_SUPPORT_DRYRUN
+	if (oc_dryrun) return;
+	#endif
+	
     // Set E direction (Depends on E direction + advance)
     for(unsigned char i=0; i<4;i++) {
       if (e_steps[0] != 0) {
@@ -813,6 +878,22 @@ ISR(TIMER1_COMPA_vect)
         }
       }
  #endif
+ #if EXTRUDERS > 3
+      if (e_steps[3] != 0) {
+        WRITE(E3_STEP_PIN, INVERT_E_STEP_PIN);
+        if (e_steps[3] < 0) {
+          WRITE(E3_DIR_PIN, INVERT_E3_DIR);
+          e_steps[3]++;
+          WRITE(E3_STEP_PIN, !INVERT_E_STEP_PIN);
+        }
+        else if (e_steps[3] > 0) {
+          WRITE(E3_DIR_PIN, !INVERT_E3_DIR);
+          e_steps[3]--;
+          WRITE(E3_STEP_PIN, !INVERT_E_STEP_PIN);
+        }
+      }
+ #endif
+
     }
   }
 #endif // ADVANCE
@@ -851,6 +932,9 @@ void st_init()
   #endif
   #if defined(E2_DIR_PIN) && (E2_DIR_PIN > -1)
     SET_OUTPUT(E2_DIR_PIN);
+  #endif
+  #if defined(E3_DIR_PIN) && (E3_DIR_PIN > -1)
+    SET_OUTPUT(E3_DIR_PIN);
   #endif
 
   //Initialize Enable Pins - steppers default to disabled.
@@ -892,6 +976,10 @@ void st_init()
   #if defined(E2_ENABLE_PIN) && (E2_ENABLE_PIN > -1)
     SET_OUTPUT(E2_ENABLE_PIN);
     if(!E_ENABLE_ON) WRITE(E2_ENABLE_PIN,HIGH);
+  #endif
+  #if defined(E3_ENABLE_PIN) && (E3_ENABLE_PIN > -1)
+    SET_OUTPUT(E3_ENABLE_PIN);
+    if(!E_ENABLE_ON) WRITE(E3_ENABLE_PIN,HIGH);
   #endif
 
   //endstops and pullups
@@ -983,6 +1071,11 @@ void st_init()
     WRITE(E2_STEP_PIN,INVERT_E_STEP_PIN);
     disable_e2();
   #endif
+  #if defined(E3_STEP_PIN) && (E3_STEP_PIN > -1)
+    SET_OUTPUT(E3_STEP_PIN);
+    WRITE(E3_STEP_PIN,INVERT_E_STEP_PIN);
+    disable_e3();
+  #endif
 
   // waveform generation = 0100 = CTC
   TCCR1B &= ~(1<<WGM13);
@@ -1013,6 +1106,7 @@ void st_init()
     e_steps[0] = 0;
     e_steps[1] = 0;
     e_steps[2] = 0;
+    e_steps[3] = 0;
     TIMSK0 |= (1<<OCIE0A);
   #endif //ADVANCE
 
@@ -1024,11 +1118,11 @@ void st_init()
 // Block until all buffered steps are executed
 void st_synchronize()
 {
-    while( blocks_queued()) {
-    manage_heater();
-    manage_inactivity();
-    lcd_update(0);
-  }
+    while (blocks_queued()) {
+	    manage_heater();
+	    manage_inactivity();
+	    lcd_update(LUT_ST_SYNCHRONIZE);
+  	}
 }
 
 void st_set_position(const long &x, const long &y, const long &z, const long &e)
@@ -1074,6 +1168,7 @@ void finishAndDisableSteppers()
   disable_e0();
   disable_e1();
   disable_e2();
+  disable_e3();
 }
 
 void quickStop()
@@ -1110,9 +1205,9 @@ void babystep(const uint8_t axis,const bool direction)
     #ifdef DUAL_X_CARRIAGE
       WRITE(X2_STEP_PIN, !INVERT_X_STEP_PIN);
     #endif
-    {
-    float x=1./float(axis+1)/float(axis+2); //wait a tiny bit
-    }
+
+    _delay_us(1U); // wait 1 microsecond
+
     WRITE(X_STEP_PIN, INVERT_X_STEP_PIN);
     #ifdef DUAL_X_CARRIAGE
       WRITE(X2_STEP_PIN, INVERT_X_STEP_PIN);
@@ -1142,9 +1237,9 @@ void babystep(const uint8_t axis,const bool direction)
     #ifdef DUAL_Y_CARRIAGE
       WRITE(Y2_STEP_PIN, !INVERT_Y_STEP_PIN);
     #endif
-    {
-    float x=1./float(axis+1)/float(axis+2); //wait a tiny bit
-    }
+
+    _delay_us(1U); // wait 1 microsecond
+
     WRITE(Y_STEP_PIN, INVERT_Y_STEP_PIN);
     #ifdef DUAL_Y_CARRIAGE
       WRITE(Y2_STEP_PIN, INVERT_Y_STEP_PIN);
@@ -1174,10 +1269,9 @@ void babystep(const uint8_t axis,const bool direction)
     #ifdef Z_DUAL_STEPPER_DRIVERS
       WRITE(Z2_STEP_PIN, !INVERT_Z_STEP_PIN);
     #endif
-    //wait a tiny bit
-    {
-    float x=1./float(axis+1); //absolutely useless
-    }
+
+    _delay_us(1U); // wait 1 microsecond
+
     WRITE(Z_STEP_PIN, INVERT_Z_STEP_PIN);
     #ifdef Z_DUAL_STEPPER_DRIVERS
       WRITE(Z2_STEP_PIN, INVERT_Z_STEP_PIN);
@@ -1210,10 +1304,8 @@ void babystep(const uint8_t axis,const bool direction)
     WRITE(Y_STEP_PIN, !INVERT_Y_STEP_PIN); 
     WRITE(Z_STEP_PIN, !INVERT_Z_STEP_PIN); 
     
-    //wait a tiny bit
-    {
-    float x=1./float(axis+1); //absolutely useless
-    }
+    _delay_us(1U); // wait 1 microsecond
+
     WRITE(X_STEP_PIN, INVERT_X_STEP_PIN); 
     WRITE(Y_STEP_PIN, INVERT_Y_STEP_PIN); 
     WRITE(Z_STEP_PIN, INVERT_Z_STEP_PIN);

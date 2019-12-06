@@ -129,7 +129,8 @@ SIGNAL (TIMER5_COMPA_vect)
 }
 #endif
 
-#elif defined WIRING
+#else //!WIRING
+
 // Interrupt handlers for Wiring
 #if defined(_useTimer1)
 void Timer1Service()
@@ -325,20 +326,10 @@ int Servo::read() // return the value as degrees
   return  map( this->readMicroseconds()+1, SERVO_MIN(), SERVO_MAX(), 0, 180);
 }
 
-int Servo::readMicroseconds()
-{
-  unsigned int pulsewidth;
-  if( this->servoIndex != INVALID_SERVO )
-    pulsewidth = ticksToUs(servos[this->servoIndex].ticks)  + TRIM_DURATION ;   // 12 aug 2009
-  else
-    pulsewidth  = 0;
-
-  return pulsewidth;
+int Servo::readMicroseconds() {
+  return (this->servoIndex == INVALID_SERVO) ? 0 : ticksToUs(servos[this->servoIndex].ticks) + TRIM_DURATION;
 }
 
-bool Servo::attached()
-{
-  return servos[this->servoIndex].Pin.isActive ;
-}
+bool Servo::attached() { return servos[this->servoIndex].Pin.isActive; }
 
 #endif
