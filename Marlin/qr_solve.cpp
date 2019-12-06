@@ -1122,7 +1122,7 @@ int dqrls ( double a[], int lda, int m, int n, double tol, int *kr, double b[],
     fprintf ( stderr, "DQRLS - Fatal error!\n" );
     fprintf ( stderr, "  LDA < M.\n" );*/
     ind = -1;
-    return ind; .h
+    return ind;
   }
 
   if ( n <= 0 )
