@@ -668,7 +668,7 @@ void loop()
   manage_heater();
   manage_inactivity();
   checkHitEndstops();
-  lcd_update();
+  lcd_update(0);
 }
 
 void get_command()
@@ -1412,7 +1412,7 @@ void process_commands()
       while(millis() < codenum) {
         manage_heater();
         manage_inactivity();
-        lcd_update();
+        lcd_update(0);
       }
       break;
       #ifdef FWRETRACT
@@ -1916,7 +1916,7 @@ void process_commands()
         while(millis() < codenum && !lcd_clicked()){
           manage_heater();
           manage_inactivity();
-          lcd_update();
+          lcd_update(0);
         }
         lcd_ignore_click(false);
       }else{
@@ -1925,7 +1925,7 @@ void process_commands()
         while(!lcd_clicked()){
           manage_heater();
           manage_inactivity();
-          lcd_update();
+          lcd_update(0);
         }
       }
       if (IS_SD_PRINTING)
@@ -2526,7 +2526,7 @@ Sigma_Exit:
           }
           manage_heater();
           manage_inactivity();
-          lcd_update();
+          lcd_update(0);
         #ifdef TEMP_RESIDENCY_TIME
             /* start/restart the TEMP_RESIDENCY_TIME timer whenever we reach target temp for the first time
               or when current temp falls outside the hysteresis after target temp was reached */
@@ -2574,7 +2574,7 @@ Sigma_Exit:
           }
           manage_heater();
           manage_inactivity();
-          lcd_update();
+          lcd_update(0);
         }
         LCD_MESSAGEPGM(MSG_BED_DONE);
         previous_millis_cmd = millis();
@@ -2642,7 +2642,7 @@ Sigma_Exit:
         #ifdef ULTIPANEL
           powersupply = true;
           LCD_MESSAGEPGM(WELCOME_MSG);
-          lcd_update();
+          lcd_update(0);
         #endif
         break;
       #endif
@@ -2666,7 +2666,7 @@ Sigma_Exit:
       #ifdef ULTIPANEL
         powersupply = false;
         LCD_MESSAGEPGM(MACHINE_NAME" "MSG_OFF".");
-        lcd_update();
+        lcd_update(0);
       #endif
 	  break;
 
@@ -3121,7 +3121,7 @@ Sigma_Exit:
             while(digitalRead(pin_number) != target){
               manage_heater();
               manage_inactivity();
-              lcd_update();
+              lcd_update(0);
             }
           }
         }
@@ -3638,7 +3638,7 @@ case 404:  //M404 Enter the nominal filament width (3mm, 1.75mm ) N<3.0> or disp
           cnt++;
           manage_heater();
           manage_inactivity(true);
-          lcd_update();
+          lcd_update(0);
           if(cnt==0)
           {
           #if BEEPER > 0
@@ -4478,7 +4478,7 @@ void kill()
   
   // FMC small patch to update the LCD before ending
   sei();   // enable interrupts
-  for ( int i=5; i--; lcd_update())
+  for ( int i=5; i--; lcd_update(0))
   {
      delay(200);	
   }

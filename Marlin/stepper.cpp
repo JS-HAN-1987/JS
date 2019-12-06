@@ -1027,7 +1027,7 @@ void st_synchronize()
     while( blocks_queued()) {
     manage_heater();
     manage_inactivity();
-    lcd_update();
+    lcd_update(0);
   }
 }
 
