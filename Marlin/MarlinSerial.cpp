@@ -72,14 +72,14 @@ void MarlinSerial::begin(long baud)
   uint16_t baud_setting;
   bool useU2X = true;
 
-#if F_CPU == 16000000UL && SERIAL_PORT == 0
-  // hard-coded exception for compatibility with the bootloader shipped
-  // with the Duemilanove and previous boards and the firmware on the 8U2
-  // on the Uno and Mega 2560.
-  if (baud == 57600) {
-    useU2X = false;
-  }
-#endif
+  #if F_CPU == 16000000UL && SERIAL_PORT == 0
+    // hard-coded exception for compatibility with the bootloader shipped
+    // with the Duemilanove and previous boards and the firmware on the 8U2
+    // on the Uno and Mega 2560.
+    if (baud == 57600) {
+      useU2X = false;
+    }
+  #endif
   
   if (useU2X) {
     M_UCSRxA = 1 << M_U2Xx;
@@ -290,7 +290,7 @@ void MarlinSerial::printFloat(double number, uint8_t digits)
 
   // Round correctly so that print(1.999, 2) prints as "2.00"
   double rounding = 0.5;
-  for (uint8_t i=0; i<digits; ++i)
+  for (uint8_t i = 0; i < digits; ++i)
     rounding /= 10.0;
   
   number += rounding;

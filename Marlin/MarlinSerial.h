@@ -23,8 +23,8 @@
 #define MarlinSerial_h
 #include "Marlin.h"
 
-#if !defined(SERIAL_PORT) 
-#define SERIAL_PORT 0
+#ifndef SERIAL_PORT
+  #define SERIAL_PORT 0
 #endif
 
 // The presence of the UBRRH register is used to detect a UART.
@@ -36,9 +36,9 @@
 // requires two levels of indirection to expand macro values properly)
 #define SERIAL_REGNAME(registerbase,number,suffix) SERIAL_REGNAME_INTERNAL(registerbase,number,suffix)
 #if SERIAL_PORT == 0 && (!defined(UBRR0H) || !defined(UDR0)) // use un-numbered registers if necessary
-#define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##suffix
+  #define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##suffix
 #else
-#define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##number##suffix
+  #define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##number##suffix
 #endif
 
 // Registers used by MarlinSerial class (these are expanded 
@@ -94,12 +94,12 @@ class MarlinSerial //: public Stream
     int peek(void);
     int read(void);
     void flush(void);
-    
+
     FORCE_INLINE int available(void)
     {
       return (unsigned int)(RX_BUFFER_SIZE + rx_buffer.head - rx_buffer.tail) % RX_BUFFER_SIZE;
     }
-    
+
     FORCE_INLINE void write(uint8_t c)
     {
       while (!((M_UCSRxA) & (1 << M_UDREx)))
@@ -107,11 +107,11 @@ class MarlinSerial //: public Stream
 
       M_UDRx = c;
     }
-    
+
     
     FORCE_INLINE void checkRx(void)
     {
-      if((M_UCSRxA & (1<<M_RXCx)) != 0) {
+      if ((M_UCSRxA & (1<<M_RXCx)) != 0) {
         unsigned char c  =  M_UDRx;
         int i = (unsigned int)(rx_buffer.head + 1) % RX_BUFFER_SIZE;
 
@@ -125,15 +125,15 @@ class MarlinSerial //: public Stream
         }
       }
     }
+
     
-    
-    private:
+  private:
     void printNumber(unsigned long, uint8_t);
     void printFloat(double, uint8_t);
-    
+
     
   public:
-    
+
     FORCE_INLINE void write(const char *str)
     {
       while (*str)
