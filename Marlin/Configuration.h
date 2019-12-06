@@ -1,7 +1,11 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
+
+
 #include "boards.h"
+
+#define UI_V2 1
 #define MQ_P1 1
 #include "Configuration_MQ_P1.h"
 

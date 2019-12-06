@@ -17,7 +17,7 @@ bool in_tft = false;
 #ifdef OC_TFT
 
 #ifdef UI_V2
-#include "new_fonts/fonts.h"
+#include "fonts.h"
 #else
 #include "oc_bitmaps.h"
 #endif
