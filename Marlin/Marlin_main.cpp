@@ -28,7 +28,7 @@
  */
 
 #include "Marlin.h"
-
+#include "Default_Version.h"
 #ifdef ENABLE_AUTO_BED_LEVELING
 #include "vector_3.h"
   #ifdef AUTO_BED_LEVELING_GRID
@@ -572,7 +572,7 @@ void setup()
   MCUSR=0;
 
   SERIAL_ECHOPGM(MSG_MARLIN);
-  SERIAL_ECHOLNPGM(" " SHORT_BUILD_VERSION);
+  SERIAL_ECHOLNPGM(SHORT_BUILD_VERSION);
 
   #ifdef STRING_DISTRIBUTION_DATE
     #ifdef STRING_CONFIG_H_AUTHOR
