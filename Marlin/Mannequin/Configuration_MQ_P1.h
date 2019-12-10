@@ -135,7 +135,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 #define XY_TRAVEL_SPEED 10000         // X and Y axis travel speed between probes, in mm/min
 
 #define EEPROM_SETTINGS
-#define PLA_PREHEAT_FAN_SPEED 0   // Insert Value between 0 and 255
 
 #define xREPRAP_DISCOUNT_SMART_CONTROLLER
 
@@ -161,4 +160,3 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 // ================================================
 #endif // MQ_S4
 // ================================================
-
