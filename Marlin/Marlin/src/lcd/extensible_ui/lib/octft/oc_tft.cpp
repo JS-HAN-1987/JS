@@ -7,7 +7,7 @@
 //  Created by James Kang
 //  Copyright (c) 2014-2015 OpenCreators, Inc. All rights reserved.
 //
-#include "../../Marlin.h"
+#include "../../../../Marlin.h"
 #include "oc_firmware.h"
 #include "oc_tft.h"
 

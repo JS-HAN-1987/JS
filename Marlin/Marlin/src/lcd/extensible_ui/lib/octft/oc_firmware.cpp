@@ -8,12 +8,12 @@
 //  Copyright (c) 2014-2015 OpenCreators, Inc. All rights reserved.
 //
 #include "oc_firmware.h"
-#include "../../Marlin.h"
+#include "../../../../Marlin.h"
 
 #define _LOG________________
 #include <stdarg.h>
 
-	#define ESC "\x1b"
+	#define ESC "\x1b"oc_
 
 	#define ANSI_RESET ESC "[0m"
 	#define ANSI_OK    ESC "[30;42;1m" ESC "[K"
@@ -156,33 +156,33 @@ void fw_setzoffset(float zoff)
 
 void get_current_coords(float *px, float *py, float *pz)
 {
-	*px = current_position[X_AXIS];
-	*py = current_position[Y_AXIS];
-	*pz = current_position[Z_AXIS];
+	//*px = current_position[X_AXIS];
+	//*py = current_position[Y_AXIS];
+	//*pz = current_position[Z_AXIS];
 }
 
 void get_elapsed_time(char *dst)
 {
-	if (starttime) {
-		uint16_t time = millis() / 60000 - starttime / 60000;
-		sprintf_P(dst, PSTR("%02d:%02d"), time / 60, time % 60);
-	} else {
-		strcpy_P(dst, PSTR("--:--"));
-	}
+	//if (starttime) {
+	//	uint16_t time = millis() / 60000 - starttime / 60000;
+	//	sprintf_P(dst, PSTR("%02d:%02d"), time / 60, time % 60);
+	//} else {
+	//	strcpy_P(dst, PSTR("--:--"));
+	//}
 }
 
 void get_timeleft(char *dst, uint32_t a, uint32_t b)
 {
-	if (a == b) {
-		strcpy_P(dst, PSTR("00:00"));
-	} else if (starttime && a) {
-		uint16_t et = millis() / 60000 - starttime / 60000;
-		uint16_t tt = et * b / a;
-		uint16_t tl = tt - et;
-		sprintf_P(dst, PSTR("%02d:%02d"), tl / 60, tl % 60);
-	} else {
-		strcpy_P(dst, PSTR("--:--"));
-	}
+	//if (a == b) {
+	//	strcpy_P(dst, PSTR("00:00"));
+	//} else if (starttime && a) {
+	//	uint16_t et = millis() / 60000 - starttime / 60000;
+	//	uint16_t tt = et * b / a;
+	//	uint16_t tl = tt - et;
+	//	sprintf_P(dst, PSTR("%02d:%02d"), tl / 60, tl % 60);
+	//} else {
+	//	strcpy_P(dst, PSTR("--:--"));
+	//}
 }
 
 void get_endstop_status(char *pxt, char *pyt, char *pzt)
