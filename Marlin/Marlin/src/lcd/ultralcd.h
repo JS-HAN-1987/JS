@@ -406,6 +406,33 @@ public:
 
   #else // No LCD
 
+
+	/*#ifdef OC_TFT
+		#define lcd_update otm_update
+		#define lcd_init otm_init
+		#define lcd_setstatus otm_setstatus
+		#define lcd_buttons_update otm_buttons_update
+		#define lcd_reset_alert_level otm_reset_alert_level
+		#define lcd_buzz otm_buzz
+		#define lcd_detected otm_detected
+
+		#include "octft/oc_lut_but.h"
+		void otm_update(int lut);
+		void otm_init();
+		void otm_setstatus(const char* message);
+		void otm_buttons_update(int but);
+		void otm_reset_alert_level();
+		FORCE_INLINE void otm_buzz(long duration, uint16_t freq) {}
+		FORCE_INLINE bool otm_detected(void) { return true; }
+	#else*/
+		FORCE_INLINE void lcd_update(int lut) {}
+		FORCE_INLINE void lcd_init() {}
+		FORCE_INLINE void lcd_setstatus(const char* message) {}
+		FORCE_INLINE void lcd_buttons_update(int but) {}
+		FORCE_INLINE void lcd_reset_alert_level() {}
+		FORCE_INLINE void lcd_buzz(long duration, uint16_t freq) {}
+		FORCE_INLINE bool lcd_detected(void) { return true; }
+	//#endif
     // Send status to host as a notification
     void set_status(const char* message, const bool=false);
     void set_status_P(PGM_P message, const int8_t=0);

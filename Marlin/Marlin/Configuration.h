@@ -42,19 +42,6 @@
 //============================= Getting Started =============================
 //===========================================================================
 
-
-#define Mannequin
-if define(Mannequin)
-#define OC_TFT
-#define SDSUPPORT
-#define LCD_BED_LEVELING
-#define CUSTOM_M_CODE_SET_Z_PROBE_OFFSET 851
-endif
-
-
-
-
-
 /**
  * Here are some standard links for getting your machine calibrated:
  *
@@ -857,8 +844,8 @@ endif
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-#define PROBE_MANUALLY
-#define MANUAL_PROBE_START_Z 0.5
+//#define PROBE_MANUALLY
+//#define MANUAL_PROBE_START_Z 0.5
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1401,7 +1388,11 @@ endif
 //============================= Additional Features ===========================
 //=============================================================================
 
-
+// Custom M code points
+#define CUSTOM_M_CODES
+#ifdef CUSTOM_M_CODES
+  #define CUSTOM_M_CODE_SET_Z_PROBE_OFFSET 851
+#endif
 
 // @section extras
 
@@ -1414,9 +1405,9 @@ endif
  *   M501 - Read settings from EEPROM. (i.e., Throw away unsaved changes)
  *   M502 - Revert settings to "factory" defaults. (Follow with M500 to init the EEPROM.)
  */
-#define EEPROM_SETTINGS     // Persistent storage with M500 and M501
+//#define EEPROM_SETTINGS     // Persistent storage with M500 and M501
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
-//#define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
+#define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #if ENABLED(EEPROM_SETTINGS)
   //#define EEPROM_AUTO_INIT  // Init EEPROM automatically on any errors.
 #endif
