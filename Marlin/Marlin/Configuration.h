@@ -53,7 +53,19 @@
  * https://sites.google.com/site/repraplogphase/calibration-of-your-reprap
  * http://www.thingiverse.com/thing:298812
  */
+#define MANNEQUIN
+#ifdef MANNEQUIN
+	#define OC_TFT
+	#define TFT_ROTATION 3
 
+	#define SDSUPPORT
+	#define GCODE_STR_HOME      "G28"
+	#define GCODE_STR_AUTOLEVEL "G29"
+	#define GCODE_STR_NPDM      "M800"
+	#define GCODE_STR_PREHEAT   "M104 S185"
+	#define GCODE_STR_COOLDOWN  "M104 S0"
+	#define GCODE_STR_MOTOROFF  "M84"
+#endif
 //===========================================================================
 //============================= DELTA Printer ===============================
 //===========================================================================
@@ -1388,12 +1400,6 @@
 //============================= Additional Features ===========================
 //=============================================================================
 
-// Custom M code points
-#define CUSTOM_M_CODES
-#ifdef CUSTOM_M_CODES
-  #define CUSTOM_M_CODE_SET_Z_PROBE_OFFSET 851
-#endif
-
 // @section extras
 
 /**
@@ -2188,21 +2194,6 @@
 #if ANY(BLINKM, RGB_LED, RGBW_LED, PCA9632, PCA9533, NEOPIXEL_LED)
   #define PRINTER_EVENT_LEDS
 #endif
-
-
-//#define FILAMENT_SENSOR_EXTRUDER_NUM	0  //The number of the extruder that has the filament sensor (0,1,2)
-//#define MEASUREMENT_DELAY_CM			14  //measurement delay in cm.  This is the distance from filament sensor to middle of barrel
-
-//#define DEFAULT_NOMINAL_FILAMENT_DIA  3.0  //Enter the diameter (in mm) of the filament generally used (3.0 mm or 1.75 mm) - this is then used in the slicer software.  Used for sensor reading validation
-//#define MEASURED_UPPER_LIMIT          3.30  //upper limit factor used for sensor reading validation in mm
-//#define MEASURED_LOWER_LIMIT          1.90  //lower limit factor for sensor reading validation in mm
-//#define MAX_MEASUREMENT_DELAY			20  //delay buffer size in bytes (1 byte = 1cm)- limits maximum measurement delay allowable (must be larger than MEASUREMENT_DELAY_CM  and lower number saves RAM)
-//
-//defines used in the code
-//#define DEFAULT_MEASURED_FILAMENT_DIA  DEFAULT_NOMINAL_FILAMENT_DIA  //set measured to nominal initially 
-//
-//When using an LCD, uncomment the line below to display the Filament sensor data on the last line instead of status.  Status will appear for 5 sec.
-//#define FILAMENT_LCD_DISPLAY
 
 /**
  * R/C SERVO support
