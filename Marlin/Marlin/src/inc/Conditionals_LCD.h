@@ -25,8 +25,10 @@
  * Conditionals_LCD.h
  * Conditionals that need to be set before Configuration_adv.h or pins.h
  */
-
-#if ENABLED(CARTESIO_UI)
+#if ENABLED(MANNEQUIN)
+  #define IS_ULTIPANEL
+//  #define DOGLCD
+#elif ENABLED(CARTESIO_UI)
 
   #define DOGLCD
   #define IS_ULTIPANEL

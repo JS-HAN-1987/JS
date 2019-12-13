@@ -414,7 +414,23 @@
   //
   // LCD Display output pins
   //
-  #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+  #if ENABLED(MANNEQUIN)
+	#define LCD_RESET 47 // A4 // 47
+	#define LCD_CS 32 // A3 // 32
+	#define LCD_CD 59 // A2 // 59(A5)
+	#define LCD_WR 58 // A1 // 58(A4)
+	#define LCD_RD 40 // A0 // 40
+
+	#define LCD_D0 63
+	#define LCD_D1 64
+	#define LCD_D2 65
+	#define LCD_D3 66
+	#define LCD_D4 45
+	#define LCD_D5 44
+	#define LCD_D6 43
+	#define LCD_D7 42
+
+  #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
 
     #define LCD_PINS_RS         49   // CS chip select /SS chip slave select
     #define LCD_PINS_ENABLE     51   // SID (MOSI)
@@ -658,7 +674,11 @@
     #elif ENABLED(AZSMZ_12864)
 
       // Pins only defined for RAMPS_SMART currently
-
+	#elif ENABLED(MANNEQUIN)
+	  #define BTN_EN1 31
+	  #define BTN_EN2 33
+	  #define BTN_ENC 35
+	  #define SD_DETECT_PIN 49
     #else
 
       // Beeper on AUX-4
