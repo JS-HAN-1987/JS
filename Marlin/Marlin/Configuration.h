@@ -56,6 +56,8 @@
 #define MANNEQUIN
 #ifdef MANNEQUIN
 	#define OC_TFT
+	#define WORKAROUND_FOR_ILI9325
+	#define UI_V2
 	#define TFT_ROTATION 3
 
 	#define SDSUPPORT
@@ -103,7 +105,7 @@
  */
 
 // Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
-#define SHOW_BOOTSCREEN
+//#define SHOW_BOOTSCREEN
 
 // Show the bitmap in Marlin/_Bootscreen.h on startup.
 //#define SHOW_CUSTOM_BOOTSCREEN
