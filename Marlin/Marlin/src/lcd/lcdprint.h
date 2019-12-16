@@ -12,16 +12,11 @@
 
 #include "../inc/MarlinConfig.h"
 
-#ifndef LCD_WIDTH
-	#define LCD_WIDTH 1
-#endif
-
 typedef uint8_t lcd_uint_t;
 
 #define START_OF_UTF8_CHAR(C) (((C) & 0xC0u) != 0x80u)
 
-int lcd_glyph_height();
-
+//int lcd_glyph_height();
 int lcd_put_wchar_max(wchar_t c, pixel_len_t max_length);
 
 /**
