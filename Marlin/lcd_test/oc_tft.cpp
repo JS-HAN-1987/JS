@@ -23,7 +23,6 @@ bool in_tft = false;
 #define LCD_RD 40 // A0 // 40
 
 #include <Adafruit_GFX.h>    // Core graphics library
-#include "Adafruit_TFTLCD.h" // Hardware-specific library
 
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
@@ -265,7 +264,7 @@ int draw_bignumber_char(int x, int y, int flags, char c, bool draw)
 	return dx;
 }
 
-static int tft_printchar(int x, int y, int flags, char c, bool draw)
+int tft_printchar(int x, int y, int flags, char c, bool draw)
 {
 	int dx = 12;
 	switch (c) {

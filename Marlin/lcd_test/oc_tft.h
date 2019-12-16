@@ -14,6 +14,8 @@
 
 #include <stdint.h>
 #include <avr/pgmspace.h>
+#include "Adafruit_TFTLCD.h" // Hardware-specific library
+
 #define WORKAROUND_FOR_ILI9325
 #define BIG_PERCENT
 
@@ -57,7 +59,7 @@ void tft_drawtextfmt(int x, int y, int text_size, int fcolor, int bcolor, char *
 void tft_setbitmapcolor(uint16_t fcolor, uint16_t bcolor);
 void tft_drawbitmap(int px, int py, int flags, const uint8_t bitmap[] PROGMEM);
 int tft_printf(int x, int y, int flags, int fcolor, int bcolor, char *oldstr, char *fmt, ...);
-
+int tft_printchar(int x, int y, int flags, char c, bool draw);
 
 
 
