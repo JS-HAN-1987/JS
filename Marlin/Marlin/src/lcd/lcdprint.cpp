@@ -60,4 +60,11 @@ lcd_uint_t lcd_put_u8str_ind_P(PGM_P const pstr, const uint8_t ind, const lcd_ui
   return n;
 }
 
+int lcd_put_u8str_max(const char* utf8_str, pixel_len_t max_length) {
+	return 0;
+}
+void lcd_moveto(const lcd_uint_t col, const lcd_uint_t row) {
+
+}
+
 #endif // HAS_SPI_LCD

@@ -36,7 +36,7 @@
 #define HAS_SLOW_BUTTONS EITHER(LCD_I2C_VIKI, LCD_I2C_PANELOLU2)
 
 #if HAS_SPI_LCD
-
+  #include "lcdprint.h"
   #include "../Marlin.h"
 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
@@ -71,8 +71,6 @@
       #define SETCURSOR(col, row) lcd_moveto(col, row)
       #define SETCURSOR_RJ(len, row) lcd_moveto(LCD_WIDTH - (len), row)
     #endif
-
-    #include "lcdprint.h"
 
     void _wrap_string(uint8_t &col, uint8_t &row, const char * const string, read_byte_cb_t cb_read_byte, const bool wordwrap=false);
     inline void wrap_string_P(uint8_t &col, uint8_t &row, PGM_P const pstr, const bool wordwrap=false) { _wrap_string(col, row, pstr, read_byte_rom, wordwrap); }
