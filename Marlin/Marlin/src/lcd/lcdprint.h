@@ -12,11 +12,17 @@
 
 #include "../inc/MarlinConfig.h"
 
-typedef uint8_t lcd_uint_t;
+#if HAS_GRAPHICAL_LCD
+  typedef uint16_t lcd_uint_t;
+#else
+  #define _UxGT(a) a
+  typedef uint8_t lcd_uint_t;
+#endif
 
 #define START_OF_UTF8_CHAR(C) (((C) & 0xC0u) != 0x80u)
 
-//int lcd_glyph_height();
+int lcd_glyph_height();
+
 int lcd_put_wchar_max(wchar_t c, pixel_len_t max_length);
 
 /**
@@ -29,7 +35,7 @@ int lcd_put_wchar_max(wchar_t c, pixel_len_t max_length);
  *
  * Draw a UTF-8 string
  */
-int lcd_put_u8str_max(const char* utf8_str, pixel_len_t max_length);
+int lcd_put_u8str_max(const char * utf8_str, pixel_len_t max_length);
 
 /**
  * Set the print baseline position
@@ -64,7 +70,7 @@ inline int lcd_put_u8str_P(const lcd_uint_t col, const lcd_uint_t row, PGM_P con
   return lcd_put_u8str_P(pstr);
 }
 
-lcd_uint_t lcd_put_u8str_ind_P(PGM_P const pstr, const uint8_t ind, const lcd_uint_t maxlen = LCD_WIDTH);
+lcd_uint_t lcd_put_u8str_ind_P(PGM_P const pstr, const uint8_t ind, const lcd_uint_t maxlen=LCD_WIDTH);
 inline lcd_uint_t lcd_put_u8str_ind_P(const lcd_uint_t col, const lcd_uint_t row, PGM_P const pstr, const uint8_t ind, const lcd_uint_t maxlen=LCD_WIDTH) {
   lcd_moveto(col, row);
   return lcd_put_u8str_ind_P(pstr, ind, maxlen);
