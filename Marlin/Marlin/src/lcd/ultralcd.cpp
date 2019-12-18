@@ -148,6 +148,17 @@ millis_t MarlinUI::next_button_update_ms; // = 0
   volatile int8_t encoderDiff; // Updated in update_buttons, added to encoderPosition every LCD update
 #endif
 
+void firstPage()
+{
+  page = 0;
+}
+
+int nextPage()
+{
+  //page++;
+  return 0;
+}
+
 #if HAS_LCD_MENU
   #include "menu/menu.h"
   #include "../sd/cardreader.h"
@@ -362,6 +373,8 @@ void MarlinUI::init() {
   #if HAS_ENCODER_ACTION
     encoderDiff = 0;
   #endif
+  
+  //goto_screen(menu_main);
 }
 
 bool MarlinUI::get_blink() {
@@ -550,6 +563,9 @@ void MarlinUI::status_screen() {
       #if BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
         next_filament_display = millis() + 5000UL;  // Show status message for 5s
       #endif
+	  SERIAL_ECHO_START();
+	  SERIAL_ECHOPAIR("goto_screen(menu_main)");
+      SERIAL_EOL();
       goto_screen(menu_main);
       #if DISABLED(NO_LCD_REINIT)
         init_lcd(); // May revive the LCD if static electricity killed it
@@ -1027,18 +1043,18 @@ void MarlinUI::update() {
 
         if (do_u8g_loop) {
           if (!drawing_screen) {                // If not already drawing pages
-            u8g.firstPage();                    // Start the first page
+            firstPage();                    // Start the first page
             drawing_screen = first_page = true; // Flag as drawing pages
           }
-          set_font(FONT_MENU);                  // Setup font for every page draw
-          u8g.setColorIndex(1);                 // And reset the color
+          //set_font(FONT_MENU);                  // Setup font for every page draw
+          //u8g.setColorIndex(1);                 // And reset the color
           run_current_screen();                 // Draw and process the current screen
           first_page = false;
 
           // The screen handler can clear drawing_screen for an action that changes the screen.
           // If still drawing and there's another page, update max-time and return now.
           // The nextPage will already be set up on the next call.
-          if (drawing_screen && (drawing_screen = u8g.nextPage())) {
+          if (drawing_screen && (drawing_screen = nextPage())) {
             if (on_status_screen())
               NOLESS(max_display_update_time, millis() - ms);
             return;

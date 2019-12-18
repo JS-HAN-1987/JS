@@ -80,9 +80,11 @@ void menu_configuration();
 extern const char M21_STR[];
 
 void menu_main() {
+  SERIAL_ECHOLN("menu_main");
   START_MENU();
   BACK_ITEM(MSG_WATCH);
 
+  
   const bool busy = printingIsActive()
     #if ENABLED(SDSUPPORT)
       , card_detected = card.isMounted()
@@ -288,6 +290,8 @@ void menu_main() {
   #endif
 
   END_MENU();
+
+  SERIAL_ECHOLN("menu_main END");
 }
 
 #endif // HAS_LCD_MENU

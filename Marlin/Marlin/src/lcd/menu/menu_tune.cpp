@@ -74,7 +74,7 @@
         );
         if (in_view) {
           #if HAS_GRAPHICAL_LCD
-            ui.set_font(FONT_MENU);
+            //ui.set_font(FONT_MENU);
             lcd_moveto(0, LCD_PIXEL_HEIGHT - MENU_FONT_DESCENT);
           #else
             lcd_moveto(0, LCD_HEIGHT - 1);

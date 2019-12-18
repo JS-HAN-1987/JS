@@ -136,7 +136,7 @@ void BrickoutGame::game_screen() {
     } while (false);
   }
 
-  u8g.setColorIndex(1);
+  //u8g.setColorIndex(1);
 
   // Draw bricks
   if (PAGE_CONTAINS(BRICK_TOP, BRICK_BOT)) {

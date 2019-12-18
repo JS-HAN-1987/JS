@@ -77,7 +77,7 @@ void MazeGame::game_screen() {
 
   } while(0);
 
-  u8g.setColorIndex(1);
+  //u8g.setColorIndex(1);
 
   // Draw Score
   if (PAGE_UNDER(HEADER_H)) lcd_put_int(0, HEADER_H - 1, score);

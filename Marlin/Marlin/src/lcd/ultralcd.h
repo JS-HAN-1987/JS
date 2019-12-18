@@ -242,6 +242,11 @@
   };
 #endif
 
+#if HAS_GRAPHICAL_LCD
+  void firstPage();
+  int nextPage();
+#endif
+
 ////////////////////////////////////////////
 //////////// MarlinUI Singleton ////////////
 ////////////////////////////////////////////
@@ -345,8 +350,7 @@ public:
       #if HAS_GRAPHICAL_LCD
 
         static bool drawing_screen, first_page;
-
-        static void set_font(const MarlinFont font_nr);
+        //static void set_font(const MarlinFont font_nr);
 
       #else
 
