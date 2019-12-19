@@ -35,7 +35,7 @@
  * lcd_put_u8str_ind_P
  * Print a string with an index substituted within it
  */
-lcd_uint_t lcd_put_u8str_ind_P(PGM_P const pstr, const uint8_t ind, const lcd_uint_t maxlen/*=LCD_WIDTH*/) {
+int lcd_put_u8str_ind_P(PGM_P const pstr, const uint8_t ind, const lcd_uint_t maxlen/*=LCD_WIDTH*/) {
   
   uint8_t *p = (uint8_t*)pstr;
   lcd_uint_t n = maxlen;

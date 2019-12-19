@@ -63,7 +63,6 @@
 #endif
 
 
-
 int page=0;
 
 #if HAS_LCD_CONTRAST
@@ -252,7 +251,13 @@ void MarlinUI::draw_kill_screen() {
   */
 }
 
-void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
+void MarlinUI::clear_lcd() { 
+	
+} // Automatically cleared by Picture Loop
+
+void MarlinUI::clear(){
+	tft_clear();
+}
 
 #if HAS_LCD_MENU
 
@@ -282,16 +287,25 @@ void MarlinUI::draw_hotend_status(const uint8_t row, const uint8_t extruder) {
 
 // Set the colors for a menu item based on whether it is selected
 static bool mark_as_selected(const uint8_t row, const bool sel) {	
-	row_y2 = row * (MENU_FONT_HEIGHT)+1;
+	SERIAL_ECHO("mark_as_selected");
+	SERIAL_ECHO((int)row);
+	SERIAL_ECHO(" ");
+	SERIAL_ECHOLN(sel ? 1 : 0);
+	row_y2 = row * (MENU_FONT_HEIGHT) + 1;
 	row_y1 = row_y2 + MENU_FONT_HEIGHT - 1;
 	
-	if (!PAGE_CONTAINS(row_y2 + 1, row_y1 + 2)) 
+	if (!PAGE_CONTAINS(row_y2, row_y1)) 
 		return false;
-
+/*
 	if (sel) {
-		drawHLine(0, row_y1 + 1, LCD_PIXEL_WIDTH);
-		drawHLine(0, row_y2 + 2, LCD_PIXEL_WIDTH);
+		SERIAL_ECHO("draw sel");
+		SERIAL_ECHO((int)row_y1);
+		SERIAL_ECHO(" ");
+		SERIAL_ECHOLN((int)row_y2);
+		drawHLine(0, row_y1, LCD_PIXEL_WIDTH);
+		drawHLine(0, row_y2, LCD_PIXEL_WIDTH);
 	}
+	*/
 	lcd_moveto(0, row_y2);
 	return true;
 }
@@ -318,12 +332,27 @@ void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t st
 
 // Draw a generic menu item
 void MenuItemBase::_draw(const bool sel, const uint8_t row, PGM_P const pstr, const char, const char post_char) {
-	//SERIAL_ECHO("2");
+//	SERIAL_ECHO((int)row);
+//	SERIAL_ECHO(" ");
+	SERIAL_ECHO_P( pstr);
+	SERIAL_ECHO( post_char);
+	SERIAL_ECHO( (int)post_char);
+	SERIAL_ECHOLN("");
 	if (mark_as_selected(row, sel)) {		
-		uint16_t n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2) * (MENU_FONT_WIDTH);
-		while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+		int n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2) * (MENU_FONT_WIDTH);
+		while (n > MENU_FONT_WIDTH)
+			n -= lcd_put_wchar(' ');
 		lcd_put_wchar(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH), row_y2, post_char);
 		lcd_put_wchar(' ');
+		
+		if (sel) {
+			SERIAL_ECHO("draw sel");
+			SERIAL_ECHO((int)row_y1);
+			SERIAL_ECHO(" ");
+			SERIAL_ECHOLN((int)row_y2);
+			drawHLine(0, row_y1, LCD_PIXEL_WIDTH);
+			drawHLine(0, row_y2, LCD_PIXEL_WIDTH);
+		}
 	}
 }
 

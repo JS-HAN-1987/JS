@@ -20,6 +20,7 @@
 #include "../lcdprint.h"
 #include "oc_tft/oc_tft.h"
 
+
 int lcd_glyph_height() { return 240; }
 
 bool isOutofRange(int x, int y){
@@ -49,8 +50,9 @@ int lcd_put_wchar_max(wchar_t c, pixel_len_t max_length) {
   uint16_t x = getPrintCol(), y = getPrintRow();
   if( isOutofRange( x, y))
   {
+	SERIAL_ECHO("lcd_put_wchar_max::outofRange ");
 	SERIAL_ECHOLN(x); SERIAL_ECHOLN(y);
-	return -1;
+	return LCD_PIXEL_WIDTH;
   }
 
   if (c < 256) {

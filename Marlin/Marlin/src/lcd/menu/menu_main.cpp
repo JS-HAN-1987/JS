@@ -81,6 +81,7 @@ extern const char M21_STR[];
 
 void menu_main() {
   SERIAL_ECHOLN("menu_main");
+  ui.clear();
   START_MENU();
   BACK_ITEM(MSG_WATCH);
 
@@ -150,12 +151,13 @@ void menu_main() {
     SUBMENU(MSG_MOTION, menu_motion);
   }
 
+
   #if HAS_CUTTER
     SUBMENU(MSG_CUTTER(MENU), menu_spindle_laser);
   #endif
-
+  
   SUBMENU(MSG_TEMPERATURE, menu_temperature);
-
+  
   #if ENABLED(MIXING_EXTRUDER)
     SUBMENU(MSG_MIXER, menu_mixer);
   #endif
@@ -184,15 +186,12 @@ void menu_main() {
       SUBMENU(MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
   #endif
-
   #if ENABLED(LCD_INFO_MENU)
     SUBMENU(MSG_INFO_MENU, menu_info);
   #endif
-
   #if ENABLED(LED_CONTROL_MENU)
     SUBMENU(MSG_LED_CONTROL, menu_led);
   #endif
-
   //
   // Switch power on/off
   //
@@ -202,7 +201,6 @@ void menu_main() {
     else
       GCODES_ITEM(MSG_SWITCH_PS_ON, PSTR("M80"));
   #endif
-
   #if HAS_ENCODER_WHEEL && ENABLED(SDSUPPORT)
 
     // *** IF THIS SECTION IS CHANGED, REPRODUCE ABOVE ***
@@ -236,7 +234,6 @@ void menu_main() {
     }
 
   #endif // HAS_ENCODER_WHEEL && SDSUPPORT
-
   #if HAS_SERVICE_INTERVALS
     static auto _service_reset = [](const int index) {
       print_job_timer.resetServiceInterval(index);
@@ -288,7 +285,6 @@ void menu_main() {
       #endif
     ));
   #endif
-
   END_MENU();
 
   SERIAL_ECHOLN("menu_main END");

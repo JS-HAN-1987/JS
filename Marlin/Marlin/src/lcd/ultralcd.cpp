@@ -563,9 +563,7 @@ void MarlinUI::status_screen() {
       #if BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
         next_filament_display = millis() + 5000UL;  // Show status message for 5s
       #endif
-	  SERIAL_ECHO_START();
-	  SERIAL_ECHOPAIR("goto_screen(menu_main)");
-      SERIAL_EOL();
+	  SERIAL_ECHO("goto_screen(menu_main)");
       goto_screen(menu_main);
       #if DISABLED(NO_LCD_REINIT)
         init_lcd(); // May revive the LCD if static electricity killed it

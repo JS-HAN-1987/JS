@@ -317,8 +317,8 @@ class MenuItem_bool : public MenuEditItemBase {
   scroll_screen(IS_MENU ? 1 : LCD_HEIGHT, IS_MENU); \
   int8_t _menuLineNr = encoderTopLine, _thisItemNr; \
   bool _skipStatic = IS_MENU;                       \
-  for (int8_t _lcdLineNr = 0; _lcdLineNr < LCD_HEIGHT; _lcdLineNr++, _menuLineNr++) { \
-    _thisItemNr = 0
+  for (int8_t _lcdLineNr = 0; (_lcdLineNr*MENU_FONT_HEIGHT) < LCD_HEIGHT; _menuLineNr++, _lcdLineNr++) { \
+     _thisItemNr = 0
 
 /**
  * START_SCREEN  Opening code for a screen having only static items.
