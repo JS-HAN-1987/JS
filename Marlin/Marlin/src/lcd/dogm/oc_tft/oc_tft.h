@@ -60,6 +60,7 @@ void tft_drawtextfmt(int x, int y, int text_size, int fcolor, int bcolor, char *
 void tft_setbitmapcolor(uint16_t fcolor, uint16_t bcolor);
 void tft_drawbitmap(int px, int py, int flags, const uint8_t bitmap[] PROGMEM);
 int tft_printf(int x, int y, int flags, char *fmt, ...);
+int tft_printstring(int x, int y, int flags, char* string);
 void tft_drawline(int x0, int y0, int x1, int y1, uint16_t color);
 void drawHLine(int x0, int y0, int len);
 void setPrintPos(int x, int y);
@@ -68,6 +69,7 @@ void tft_put_int(int x);
 int tft_printstr(char* string);
 int  getPrintRow();
 int getPrintCol();
+int tft_printBigNumStr(char* string);
 
 
 

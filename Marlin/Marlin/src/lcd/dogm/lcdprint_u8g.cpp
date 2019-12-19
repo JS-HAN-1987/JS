@@ -21,7 +21,7 @@
 #include "oc_tft/oc_tft.h"
 
 
-int lcd_glyph_height() { return 240; }
+int lcd_glyph_height() { return LCD_PIXEL_HEIGHT; }
 
 bool isOutofRange(int x, int y){
 	if( x > LCD_PIXEL_WIDTH || x < 0)
@@ -69,11 +69,23 @@ int lcd_put_u8str_max(const char * utf8_str, pixel_len_t max_length) {
   if( isOutofRange( x, y))
   {
 	SERIAL_ECHOLN(x); SERIAL_ECHOLN(y);
-	return -1;
+	return LCD_PIXEL_WIDTH;
   }
-  uint16_t ret = tft_printf(x, y, 0, utf8_str);
+  uint16_t ret = tft_printstring(x, y, 0, utf8_str);
   setPrintPos(x + ret, y);
   return ret;
+}
+
+int lcd_put_BIGNUM_u8str_max(const char* utf8_str, pixel_len_t max_length) {
+	uint16_t x = getPrintCol(), y = getPrintRow();
+	if (isOutofRange(x, y))
+	{
+		SERIAL_ECHOLN(x); SERIAL_ECHOLN(y);
+		return LCD_PIXEL_WIDTH;
+	}
+	uint16_t ret = tft_printBigNumStr(utf8_str);
+	setPrintPos(x + ret, y);
+	return ret;
 }
 
 int lcd_put_u8str_max_P(PGM_P utf8_str_P, pixel_len_t max_length) {
@@ -81,13 +93,13 @@ uint16_t x = getPrintCol(), y = getPrintRow();
   if( isOutofRange( x, y))
   {
 	SERIAL_ECHOLN(x); SERIAL_ECHOLN(y);
-	return -1;
+	return LCD_PIXEL_WIDTH;
   }  
 
   char msg[64];
   readPGM( utf8_str_P, msg);
   
-  uint16_t ret = tft_printf(x, y, 0, msg);
+  uint16_t ret = tft_printstring(x, y, 0, msg);
   setPrintPos(x + ret, y);
   return ret;
 }

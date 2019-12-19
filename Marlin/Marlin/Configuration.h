@@ -60,7 +60,7 @@
 	#define UI_V2
 	#define TFT_ROTATION 3
 
-	//#define SDSUPPORT
+	#define SDSUPPORT
 	#define GCODE_STR_HOME      "G28"
 	#define GCODE_STR_AUTOLEVEL "G29"
 	#define GCODE_STR_NPDM      "M800"

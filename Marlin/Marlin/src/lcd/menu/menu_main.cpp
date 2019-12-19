@@ -81,7 +81,6 @@ extern const char M21_STR[];
 
 void menu_main() {
   SERIAL_ECHOLN("menu_main");
-  ui.clear();
   START_MENU();
   BACK_ITEM(MSG_WATCH);
 

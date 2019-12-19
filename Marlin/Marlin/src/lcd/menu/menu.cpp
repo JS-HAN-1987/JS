@@ -363,8 +363,12 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
   }
   if (is_menu) {
     NOMORE(encoderTopLine, encoderLine);
-    if (encoderLine >= encoderTopLine + LCD_HEIGHT)
+	if (encoderLine >= encoderTopLine + LCD_HEIGHT)
       encoderTopLine = encoderLine - LCD_HEIGHT + 1;
+	SERIAL_ECHO("encoderLine:");
+	SERIAL_ECHO(encoderLine);
+	SERIAL_ECHO("encoderTopLine:");
+	SERIAL_ECHOLN(encoderTopLine);
   }
   else
     encoderTopLine = encoderLine;

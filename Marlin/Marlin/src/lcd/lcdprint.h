@@ -36,7 +36,7 @@ int lcd_put_wchar_max(wchar_t c, pixel_len_t max_length);
  * Draw a UTF-8 string
  */
 int lcd_put_u8str_max(const char * utf8_str, pixel_len_t max_length);
-
+int lcd_put_BIGNUM_u8str_max(const char* utf8_str, pixel_len_t max_length);
 /**
  * Set the print baseline position
  */

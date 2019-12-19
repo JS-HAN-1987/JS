@@ -307,3 +307,9 @@ static const uint8_t font42x44_9[] PROGMEM = {
 static const uint8_t font42x44_percent[] PROGMEM = {
 	#include "new_fonts/4.big/font42x44_percent.png.h"
 };
+static const uint8_t font_3up[] PROGMEM = {
+	#include "new_fonts/3.special/font_3up.h"
+};
+static const uint8_t font_4right[] PROGMEM = {
+	#include "new_fonts/3.special/font_4right.h"
+};

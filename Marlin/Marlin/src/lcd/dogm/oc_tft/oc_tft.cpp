@@ -264,25 +264,43 @@ static int tft_printletter_09(int x, int y, int flags, const uint8_t bitmap[] PR
 	return (int)w;
 }
 
+#define Y_PADDING 10
+
 int draw_bignumber_char(int x, int y, int flags, char c, bool draw)
 {
+	int yy = y + Y_PADDING;
 	int dx = 28;
 	switch (c) {
-	case '0': if (draw) tft_drawbitmap(x, y, 0, font42x44_0); break;
-	case '1': if (draw) tft_drawbitmap(x, y, 0, font42x44_1); break;
-	case '2': if (draw) tft_drawbitmap(x, y, 0, font42x44_2); break;
-	case '3': if (draw) tft_drawbitmap(x, y, 0, font42x44_3); break;
-	case '4': if (draw) tft_drawbitmap(x, y, 0, font42x44_4); break;
-	case '5': if (draw) tft_drawbitmap(x, y, 0, font42x44_5); break;
-	case '6': if (draw) tft_drawbitmap(x, y, 0, font42x44_6); break;
-	case '7': if (draw) tft_drawbitmap(x, y, 0, font42x44_7); break;
-	case '8': if (draw) tft_drawbitmap(x, y, 0, font42x44_8); break;
-	case '9': if (draw) tft_drawbitmap(x, y, 0, font42x44_9); break;
-	case '%': if (draw) tft_drawbitmap(x, y, 0, font42x44_percent); dx = 41; break;
+	case '0': if (draw) tft_drawbitmap(x, yy, 0, font42x44_0); break;
+	case '1': if (draw) tft_drawbitmap(x, yy, 0, font42x44_1); break;
+	case '2': if (draw) tft_drawbitmap(x, yy, 0, font42x44_2); break;
+	case '3': if (draw) tft_drawbitmap(x, yy, 0, font42x44_3); break;
+	case '4': if (draw) tft_drawbitmap(x, yy, 0, font42x44_4); break;
+	case '5': if (draw) tft_drawbitmap(x, yy, 0, font42x44_5); break;
+	case '6': if (draw) tft_drawbitmap(x, yy, 0, font42x44_6); break;
+	case '7': if (draw) tft_drawbitmap(x, yy, 0, font42x44_7); break;
+	case '8': if (draw) tft_drawbitmap(x, yy, 0, font42x44_8); break;
+	case '9': if (draw) tft_drawbitmap(x, yy, 0, font42x44_9); break;
+	case '%': if (draw) tft_drawbitmap(x, yy, 0, font42x44_percent); dx = 41; break;
 	}
+
+	if (pt_y == y)
+		pt_x += dx;
+	else
+		pt_x = dx;
 	return dx;
 }
-#define Y_PADDING 10
+
+int tft_printBigNumStr(char* string) {
+	int i;
+	//tft_setbitmapcolor(fcolor, bcolor);
+	for (i = 0; i < strlen(string); i++) {
+		draw_bignumber_char(pt_x, pt_y, 0, string[i], true);
+	}
+	return pt_x;
+}
+
+
 int tft_printchar(int x, int y, int flags, char c, bool draw)
 {
 	int yy = y+Y_PADDING;
@@ -381,6 +399,8 @@ int tft_printchar(int x, int y, int flags, char c, bool draw)
 	case '~': dx = tft_printletter(x, yy, flags, font_tilde, draw); break;
 	case '_': dx = tft_printletter(x, yy, flags, font_underbar, draw); break;
 	case '|': dx = tft_printletter(x, yy, flags, font_verticalbar, draw); break;
+	case 3: dx = tft_printletter(x, yy, flags, font_3up, draw); break;
+	case 4: dx = tft_printletter(x, yy, flags, font_4right, draw); break;
 	}
 	if (c >= '0' && c <= '9') dx = 12;
 	
@@ -397,7 +417,7 @@ static bool cmp_char(char *_old, char *_new, int i, int olen)
 	return false;
 }
 
-static int tft_printstring(int x, int y, int flags, char *string)
+int tft_printstring(int x, int y, int flags, char *string)
 {
 	int i;
 	for (i=0; i<strlen(string); i++) {

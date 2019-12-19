@@ -44,7 +44,8 @@ int lcd_put_u8str_ind_P(PGM_P const pstr, const uint8_t ind, const lcd_uint_t ma
 	
     p = get_utf8_value_cb(p, read_byte_rom, &ch);
     if (!ch) break;
-    if (ch == '=' || ch == '~' || ch == '*') 
+    /*
+	if (ch == '=' || ch == '~' || ch == '*') 
 	{
         if (ch == '*') 
 		  { lcd_put_wchar('E'); n--; }
@@ -63,7 +64,7 @@ int lcd_put_u8str_ind_P(PGM_P const pstr, const uint8_t ind, const lcd_uint_t ma
 			n -= lcd_put_u8str_max_P((PGM_P)p, n);
 		}
         break;
-    }
+    }*/
 	
     lcd_put_wchar(ch);
   }

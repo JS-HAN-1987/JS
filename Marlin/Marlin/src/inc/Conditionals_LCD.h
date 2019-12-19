@@ -26,8 +26,10 @@
  * Conditionals that need to be set before Configuration_adv.h or pins.h
  */
 #if ENABLED(MANNEQUIN)
-	#define LCD_WIDTH 320
-	#define LCD_HEIGHT 240
+	#define LCD_PIXEL_WIDTH 320
+	#define LCD_PIXEL_HEIGHT 240
+	#define LCD_WIDTH 20
+	#define LCD_HEIGHT 5
 	#define DOGLCD
 	#define IS_ULTIPANEL
 #elif ENABLED(CARTESIO_UI)

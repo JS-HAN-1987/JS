@@ -252,12 +252,12 @@ void MarlinUI::draw_kill_screen() {
 }
 
 void MarlinUI::clear_lcd() { 
-	
+	tft_clear();
 } // Automatically cleared by Picture Loop
 
-void MarlinUI::clear(){
-	tft_clear();
-}
+//void MarlinUI::clear(){
+//	//tft_clear();
+//}
 
 #if HAS_LCD_MENU
 
@@ -287,25 +287,17 @@ void MarlinUI::draw_hotend_status(const uint8_t row, const uint8_t extruder) {
 
 // Set the colors for a menu item based on whether it is selected
 static bool mark_as_selected(const uint8_t row, const bool sel) {	
-	SERIAL_ECHO("mark_as_selected");
-	SERIAL_ECHO((int)row);
-	SERIAL_ECHO(" ");
-	SERIAL_ECHOLN(sel ? 1 : 0);
-	row_y2 = row * (MENU_FONT_HEIGHT) + 1;
-	row_y1 = row_y2 + MENU_FONT_HEIGHT - 1;
+	row_y2 = row * (MENU_FONT_HEIGHT) + 5;
+	row_y1 = row_y2 + MENU_FONT_HEIGHT - 5;
 	
 	if (!PAGE_CONTAINS(row_y2, row_y1)) 
 		return false;
-/*
+
 	if (sel) {
-		SERIAL_ECHO("draw sel");
-		SERIAL_ECHO((int)row_y1);
-		SERIAL_ECHO(" ");
-		SERIAL_ECHOLN((int)row_y2);
 		drawHLine(0, row_y1, LCD_PIXEL_WIDTH);
 		drawHLine(0, row_y2, LCD_PIXEL_WIDTH);
 	}
-	*/
+	
 	lcd_moveto(0, row_y2);
 	return true;
 }
@@ -313,11 +305,14 @@ static bool mark_as_selected(const uint8_t row, const bool sel) {
 // Draw a static line of text in the same idiom as a menu item
 void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t style/*=SS_DEFAULT*/, const char* const valstr/*=nullptr*/) {
 
-	SERIAL_ECHO("1");
-
+	SERIAL_ECHO("draw1");
+	SERIAL_ECHO_P(pstr);
+	SERIAL_ECHO(" ");
+	SERIAL_ECHO((int)row);
+	SERIAL_ECHO(" ");
+	SERIAL_ECHOLN(valstr);
 
 	if (mark_as_selected(row, style & SS_INVERT)) {
-
 		uint16_t n = LCD_PIXEL_WIDTH; // pixel width of string allowed
 
 		if ((style & SS_CENTER) && !valstr) {
@@ -325,54 +320,60 @@ void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t st
 			while (--pad >= 0) { lcd_put_wchar(' '); n--; }
 		}
 		n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH) * (MENU_FONT_WIDTH);
-		if (valstr) n -= lcd_put_u8str_max(valstr, n);
-		while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+		
+		if (valstr) 
+			n -= lcd_put_u8str_max(valstr, n);
+		//while (n > MENU_FONT_WIDTH) 
+		//	n -= lcd_put_wchar(' ');
 	}
 }
 
 // Draw a generic menu item
 void MenuItemBase::_draw(const bool sel, const uint8_t row, PGM_P const pstr, const char, const char post_char) {
-//	SERIAL_ECHO((int)row);
-//	SERIAL_ECHO(" ");
-	SERIAL_ECHO_P( pstr);
-	SERIAL_ECHO( post_char);
-	SERIAL_ECHO( (int)post_char);
-	SERIAL_ECHOLN("");
+	SERIAL_ECHO("draw2");
+	SERIAL_ECHO_P(pstr);
+	SERIAL_ECHO(" ");
+	SERIAL_ECHOLN((int)row);
 	if (mark_as_selected(row, sel)) {		
 		int n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2) * (MENU_FONT_WIDTH);
-		while (n > MENU_FONT_WIDTH)
-			n -= lcd_put_wchar(' ');
-		lcd_put_wchar(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH), row_y2, post_char);
-		lcd_put_wchar(' ');
-		
-		if (sel) {
-			SERIAL_ECHO("draw sel");
-			SERIAL_ECHO((int)row_y1);
-			SERIAL_ECHO(" ");
-			SERIAL_ECHOLN((int)row_y2);
-			drawHLine(0, row_y1, LCD_PIXEL_WIDTH);
-			drawHLine(0, row_y2, LCD_PIXEL_WIDTH);
-		}
+		//while (n > MENU_FONT_WIDTH)
+		//	n -= lcd_put_wchar(' ');
+		lcd_put_wchar(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH*3), row_y2, post_char);
+		//lcd_put_wchar(' ');
 	}
 }
 
 // Draw a menu item with an editable value
 void MenuEditItemBase::draw(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
-	SERIAL_ECHO("3");
+	SERIAL_ECHO("draw3 ");
+	SERIAL_ECHO_P(pstr);
+	SERIAL_ECHO(" ");
+	SERIAL_ECHO(pgm ? 1 : 0);
+	if (pgm)
+		SERIAL_ECHO_P(data);
+	else
+		SERIAL_ECHO(data);
+	SERIAL_ECHO(" ");
+	SERIAL_ECHOLN((int)row);
+
 	if (mark_as_selected(row, sel)) {
 		const uint8_t vallen = (pgm ? utf8_strlen_P(data) : utf8_strlen((char*)data));
 		uint16_t n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2 - vallen) * (MENU_FONT_WIDTH);
 		if (vallen) {
 			lcd_put_wchar(':');
-			while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
-			lcd_moveto(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH)*vallen, row_y2);
-			if (pgm) lcd_put_u8str_P(data); else lcd_put_u8str((char*)data);
+			//while (n > MENU_FONT_WIDTH) 
+			//	n -= lcd_put_wchar(' ');
+			lcd_moveto(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH*2)*vallen, row_y2);
+			if (pgm)
+				lcd_put_u8str_P(data);
+			else 
+				lcd_put_u8str((char*)data);
 		}
 	}
 }
 
 void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
-	SERIAL_ECHO("4");
+	SERIAL_ECHO("draw4");
 	
 	ui.encoder_direction_normal();
 
@@ -417,7 +418,8 @@ void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const valu
 		}
 		if (onpage) {
 			lcd_put_wchar(((lcd_chr_fit - 1) - (vallen + 1)) * one_chr_width, baseline, ' '); // Right-justified, padded, add a leading space
-			lcd_put_u8str(value);
+			//lcd_put_u8str(value);
+			lcd_put_BIGNUM_u8str_max(value, PIXEL_LEN_NOLIMIT);
 		}
 	}
 }
