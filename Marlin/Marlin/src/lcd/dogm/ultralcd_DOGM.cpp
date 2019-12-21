@@ -411,16 +411,16 @@ void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const valu
 	// If a value is included, print a colon, then print the value right-justified
 	if (value != nullptr) {
 		lcd_put_wchar(':');
-		if (extra_row) {
-			// Assume that value is numeric (with no descender)
-			baseline += EDIT_FONT_ASCENT + 2;
-			onpage = PAGE_CONTAINS(baseline - (EDIT_FONT_ASCENT - 1), baseline);
-		}
-		if (onpage) {
-			lcd_put_wchar(((lcd_chr_fit - 1) - (vallen + 1)) * one_chr_width, baseline, ' '); // Right-justified, padded, add a leading space
+		//if (extra_row) {
+		//	// Assume that value is numeric (with no descender)
+		//	baseline += EDIT_FONT_ASCENT + 2;
+		//	onpage = PAGE_CONTAINS(baseline - (EDIT_FONT_ASCENT - 1), baseline);
+		//}
+		//if (onpage) {
+		//	lcd_put_wchar(((lcd_chr_fit - 1) - (vallen + 1)) * one_chr_width, baseline, ' '); // Right-justified, padded, add a leading space
 			//lcd_put_u8str(value);
 			lcd_put_BIGNUM_u8str_max(value, PIXEL_LEN_NOLIMIT);
-		}
+		//}
 	}
 }
 

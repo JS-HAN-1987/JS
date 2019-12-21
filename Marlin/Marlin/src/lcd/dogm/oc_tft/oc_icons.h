@@ -1,13 +1,10 @@
 
 // logo //////////////////////////////////////////////////////////////////////
-/*
-static const uint8_t bitmap_logo0[] PROGMEM = {
-	#include "icons/oc_logo0.png.h"
+
+static const uint8_t bitmap_logo[] PROGMEM = {
+	#include "icons/oc_logotext246x24.png.h"
 };
-static const uint8_t bitmap_logo1[] PROGMEM = {
-	#include "icons/oc_logo1.png.h"
-};
-*/
+
 static const uint8_t bitmap_copyrights[] PROGMEM = {
 	#include "icons/oc_copyrights.png.h"
 };
@@ -231,6 +228,8 @@ static const uint8_t text78x21_nozzle_temp[] PROGMEM = {
 static const uint8_t text78x21_print_speed[] PROGMEM = {
   #include "icons/text78x21_print_speed.png.h"
 };
+
+
 
 // line
 static const uint8_t icon12x16_jogleft[] PROGMEM = {

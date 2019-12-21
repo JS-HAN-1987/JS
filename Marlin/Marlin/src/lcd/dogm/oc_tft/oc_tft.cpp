@@ -45,6 +45,27 @@ tft_type_e tft_type;
 void lcdInit(void);
 void lcdReset(void);
 
+
+void oc_logo(void)
+{
+	tft_off();
+
+#ifdef UI_V2
+	tft_fillscreen(BLACK);
+	tft_setbitmapcolor(WHITE, BLACK);
+	tft_drawbitmap(37, 108, 0, bitmap_logo);
+#else
+	tft_fillscreen(WHITE);
+	tft_setbitmapcolor(WHITE, BLACK);
+	#ifdef USE_OCLOGO
+		tft_drawbitmap(160 - 40, 120 - 40 - 20, 0, bitmap_logo0);
+		tft_drawbitmap(160 - 80, 120 - 8 + 60, 0, bitmap_logo1);
+	#endif
+#endif
+
+	tft_on();
+}
+
 void tft_init(void)
 {
 	if (!tft_enable_) return;
@@ -91,13 +112,13 @@ void tft_init(void)
 	in_tft = false;
 	_delay_ms(500);  // wait 1sec to display the splash screen
 	tft_on();
-	tft_fillrect(0, 0, 320, 240, BLACK);
+	//tft_fillrect(0, 0, 320, 240, BLACK);
 	
-	tft_drawbitmap(0, 0, 0, icon12x16_jogright);
+	oc_logo();
 
   
-	tft_printf(20, 10, 0, (char *)"1234");
-	tft_printf(20, 10+30*1, 0, (char *)"5678");
+	//tft_printf(20, 10, 0, (char *)"1234");
+	//tft_printf(20, 10+30*1, 0, (char *)"5678");
 	_delay_ms(500);  // wait 1sec to display the splash screen
 }
 
@@ -271,6 +292,7 @@ int draw_bignumber_char(int x, int y, int flags, char c, bool draw)
 	int yy = y + Y_PADDING;
 	int dx = 28;
 	switch (c) {
+	case ' ': if (draw) tft_drawbitmap(x, yy, 0, font_42x44_space); break;
 	case '0': if (draw) tft_drawbitmap(x, yy, 0, font42x44_0); break;
 	case '1': if (draw) tft_drawbitmap(x, yy, 0, font42x44_1); break;
 	case '2': if (draw) tft_drawbitmap(x, yy, 0, font42x44_2); break;
@@ -294,7 +316,15 @@ int draw_bignumber_char(int x, int y, int flags, char c, bool draw)
 int tft_printBigNumStr(char* string) {
 	int i;
 	//tft_setbitmapcolor(fcolor, bcolor);
-	for (i = 0; i < strlen(string); i++) {
+	int len = strlen(string);
+	if (len < 6)
+	{
+		int diff = 6 - len;
+		while(diff--)
+			draw_bignumber_char(pt_x, pt_y, 0, ' ', true);
+	}		
+
+	for (i = 0; i < len; i++) {
 		draw_bignumber_char(pt_x, pt_y, 0, string[i], true);
 	}
 	return pt_x;
