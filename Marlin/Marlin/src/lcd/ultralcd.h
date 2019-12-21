@@ -353,13 +353,10 @@ public:
       FORCE_INLINE static void refresh() { refresh(LCDVIEW_CLEAR_CALL_REDRAW); }
 
       #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
-        static void draw_custom_bootscreen(const uint8_t frame=0);
         static void show_custom_bootscreen();
       #endif
 
       #if ENABLED(SHOW_BOOTSCREEN)
-        static void draw_marlin_bootscreen(const bool line2=false);
-        static void show_marlin_bootscreen();
         static void show_bootscreen();
       #endif
 

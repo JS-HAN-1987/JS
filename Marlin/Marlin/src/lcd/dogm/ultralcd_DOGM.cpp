@@ -41,9 +41,6 @@
 #include "oc_tft/oc_tft.h"
 #include "ultralcd_DOGM.h"
 
-#if ENABLED(SHOW_BOOTSCREEN)
-  #include "dogm_Bootscreen.h"
-#endif
 
 #include "../lcdprint.h"
 #include "../fontutils.h"
@@ -83,142 +80,20 @@ bool MarlinUI::detected() { return true; }
 #if ENABLED(SHOW_BOOTSCREEN)
 
   #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
-    // Draws a slice of a particular frame of the custom bootscreen, without the u8g loop
-    void MarlinUI::draw_custom_bootscreen(const uint8_t frame/*=0*/) {
-		/*
-      constexpr uint16_t left = uint16_t((LCD_PIXEL_WIDTH  - (CUSTOM_BOOTSCREEN_BMPWIDTH)) / 2),
-                            top = uint16_t((LCD_PIXEL_HEIGHT - (CUSTOM_BOOTSCREEN_BMPHEIGHT)) / 2);
-      #if ENABLED(CUSTOM_BOOTSCREEN_INVERTED)
-        constexpr uint16_t right = left + CUSTOM_BOOTSCREEN_BMPWIDTH,
-                            bottom = top + CUSTOM_BOOTSCREEN_BMPHEIGHT;
-      #endif
-
-      const u8g_pgm_uint8_t * const bmp =
-        #if ENABLED(CUSTOM_BOOTSCREEN_ANIMATED)
-          (u8g_pgm_uint8_t*)pgm_read_ptr(&custom_bootscreen_animation[frame])
-        #else
-          custom_start_bmp
-        #endif
-      ;
-
-      u8g.drawBitmapP(left, top, CUSTOM_BOOTSCREEN_BMP_BYTEWIDTH, CUSTOM_BOOTSCREEN_BMPHEIGHT, bmp);
-
-      #if ENABLED(CUSTOM_BOOTSCREEN_INVERTED)
-        if (frame == 0) {
-          //u8g.setColorIndex(1);
-          if (top) u8g.drawBox(0, 0, LCD_PIXEL_WIDTH, top);
-          if (left) u8g.drawBox(0, top, left, CUSTOM_BOOTSCREEN_BMPHEIGHT);
-          if (right < LCD_PIXEL_WIDTH) u8g.drawBox(right, top, LCD_PIXEL_WIDTH - right, CUSTOM_BOOTSCREEN_BMPHEIGHT);
-          if (bottom < LCD_PIXEL_HEIGHT) u8g.drawBox(0, bottom, LCD_PIXEL_WIDTH, LCD_PIXEL_HEIGHT - bottom);
-        }
-      #endif
-	  */
-    }
-
     // Shows the custom bootscreen, with the u8g loop, animations and delays
     void MarlinUI::show_custom_bootscreen() {
-		/*
-      #if DISABLED(CUSTOM_BOOTSCREEN_ANIMATED)
-        constexpr millis_t d = 0;
-        constexpr uint8_t f = 0;
-      #else
-        constexpr millis_t d = CUSTOM_BOOTSCREEN_FRAME_TIME;
-        LOOP_L_N(f, COUNT(custom_bootscreen_animation))
-      #endif
-        {
-          firstPage();
-          do { draw_custom_bootscreen(f); } while (nextPage());
-          if (d) safe_delay(d);
-        }
-
-      #ifndef CUSTOM_BOOTSCREEN_TIMEOUT
-        #define CUSTOM_BOOTSCREEN_TIMEOUT 2500
-      #endif
-      safe_delay(CUSTOM_BOOTSCREEN_TIMEOUT);
-	  */
+		oc_logo( );
+		_delay_ms(1000);
+		tft_clear();
     }
   #endif // SHOW_CUSTOM_BOOTSCREEN
 
-  // Two-part needed to display all info
-  constexpr bool two_part = ((LCD_PIXEL_HEIGHT) - (START_BMPHEIGHT)) < ((MENU_FONT_ASCENT) * 2);
+  
 
-  // Draw the static Marlin bootscreen from a u8g loop
-  // or the animated boot screen within its own u8g loop
-  void MarlinUI::draw_marlin_bootscreen(const bool line2/*=false*/) {
-/*
-    // Determine text space needed
-    constexpr uint16_t text_width_1 = uint16_t((sizeof(SHORT_BUILD_VERSION) - 1) * (MENU_FONT_WIDTH)),
-                         text_width_2 = uint16_t((sizeof(MARLIN_WEBSITE_URL) - 1) * (MENU_FONT_WIDTH)),
-                         text_max_width = _MAX(text_width_1, text_width_2),
-                         text_total_height = (MENU_FONT_HEIGHT) * 2,
-                         width = LCD_PIXEL_WIDTH, height = LCD_PIXEL_HEIGHT,
-                         rspace = width - (START_BMPWIDTH);
-
-    u8g_int_t offx, offy, txt_base, txt_offx_1, txt_offx_2;
-
-    // Can the text fit to the right of the bitmap?
-    if (text_max_width < rspace) {
-      constexpr int8_t inter = (width - text_max_width - (START_BMPWIDTH)) / 3; // Evenly distribute horizontal space
-      offx = inter;                             // First the boot logo...
-      offy = (height - (START_BMPHEIGHT)) / 2;  // ...V-aligned in the full height
-      txt_offx_1 = txt_offx_2 = inter + (START_BMPWIDTH) + inter; // Text right of the bitmap
-      txt_base = (height + MENU_FONT_ASCENT + text_total_height - (MENU_FONT_HEIGHT)) / 2; // Text vertical center
-    }
-    else {
-      constexpr int8_t inter = (height - text_total_height - (START_BMPHEIGHT)) / 3; // Evenly distribute vertical space
-      offx = rspace / 2;                        // Center the boot logo in the whole space
-      offy = inter;                             // V-align boot logo proportionally
-      txt_offx_1 = (width - text_width_1) / 2;  // Text 1 centered
-      txt_offx_2 = (width - text_width_2) / 2;  // Text 2 centered
-      txt_base = offy + START_BMPHEIGHT + offy + text_total_height - (MENU_FONT_DESCENT);   // Even spacing looks best
-    }
-    NOLESS(offx, 0);
-    NOLESS(offy, 0);
-
-    auto _draw_bootscreen_bmp = [&](const uint8_t *bitmap) {
-      u8g.drawBitmapP(offx, offy, START_BMP_BYTEWIDTH, START_BMPHEIGHT, bitmap);
-      //set_font(FONT_MENU);
-      if (!two_part || !line2) lcd_put_u8str_P(txt_offx_1, txt_base - (MENU_FONT_HEIGHT), PSTR(SHORT_BUILD_VERSION));
-      if (!two_part || line2) lcd_put_u8str_P(txt_offx_2, txt_base, PSTR(MARLIN_WEBSITE_URL));
-    };
-
-    auto draw_bootscreen_bmp = [&](const uint8_t *bitmap) {
-      firstPage(); do { _draw_bootscreen_bmp(bitmap); } while (nextPage());
-    };
-
-    #if DISABLED(BOOT_MARLIN_LOGO_ANIMATED)
-      draw_bootscreen_bmp(start_bmp);
-    #else
-      constexpr millis_t d = MARLIN_BOOTSCREEN_FRAME_TIME;
-      LOOP_L_N(f, COUNT(marlin_bootscreen_animation)) {
-        draw_bootscreen_bmp((uint8_t*)pgm_read_ptr(&marlin_bootscreen_animation[f]));
-        if (d) safe_delay(d);
-      }
-    #endif
-	*/
-  }
-
-  // Show the Marlin bootscreen, with the u8g loop and delays
-  void MarlinUI::show_marlin_bootscreen() {
-	  /*
-    #ifndef BOOTSCREEN_TIMEOUT
-      #define BOOTSCREEN_TIMEOUT 2500
-    #endif
-    constexpr uint8_t pages = two_part ? 2 : 1;
-    for (uint8_t q = pages; q--;) {
-      draw_marlin_bootscreen(q == 0);
-      safe_delay((BOOTSCREEN_TIMEOUT) / pages);
-    }
-	*/
-  }
-
-  void MarlinUI::show_bootscreen() {
-	  /*
+  void MarlinUI::show_bootscreen() {	
     #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
       show_custom_bootscreen();
     #endif
-    show_marlin_bootscreen();
-	*/
   }
 
 #endif // SHOW_BOOTSCREEN

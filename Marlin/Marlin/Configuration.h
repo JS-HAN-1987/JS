@@ -67,11 +67,12 @@
 	#define GCODE_STR_PREHEAT   "M104 S185"
 	#define GCODE_STR_COOLDOWN  "M104 S0"
 	#define GCODE_STR_MOTOROFF  "M84"
+	#define HOTENDS 1
 
-#define USE_REALTIME_ZOFFSET
-#define USE_PROBE_SAFETY_CHECK
-#define WORKAROUND_FOR_ILI9325
-#define IGNORE_MINTEMP
+	#define USE_REALTIME_ZOFFSET
+	#define USE_PROBE_SAFETY_CHECK
+	#define WORKAROUND_FOR_ILI9325
+	#define IGNORE_MINTEMP
 #endif
 //===========================================================================
 //============================= DELTA Printer ===============================
@@ -105,10 +106,10 @@
  */
 
 // Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
-//#define SHOW_BOOTSCREEN
+#define SHOW_BOOTSCREEN
 
 // Show the bitmap in Marlin/_Bootscreen.h on startup.
-//#define SHOW_CUSTOM_BOOTSCREEN
+#define SHOW_CUSTOM_BOOTSCREEN
 
 // Show the bitmap in Marlin/_Statusscreen.h on the status screen.
 //#define CUSTOM_STATUS_SCREEN_IMAGE

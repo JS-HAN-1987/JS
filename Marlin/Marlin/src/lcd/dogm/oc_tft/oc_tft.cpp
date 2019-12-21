@@ -110,16 +110,8 @@ void tft_init(void)
 	else tft.setRotation(3);
 	tft_setbitmapcolor(WHITE, BLACK);
 	in_tft = false;
-	_delay_ms(500);  // wait 1sec to display the splash screen
+	_delay_ms(250);  // wait 1sec to display the splash screen
 	tft_on();
-	//tft_fillrect(0, 0, 320, 240, BLACK);
-	
-	oc_logo();
-
-  
-	//tft_printf(20, 10, 0, (char *)"1234");
-	//tft_printf(20, 10+30*1, 0, (char *)"5678");
-	_delay_ms(500);  // wait 1sec to display the splash screen
 }
 
 void tft_clear(void)
@@ -230,6 +222,48 @@ void tft_setbitmapcolor(uint16_t fcolor, uint16_t bcolor)
 	}
 	in_tft = false;
 }
+
+
+void tft_drawbitmap2(int ix, int iy, int w, int h, const uint8_t bitmap[] PROGMEM)
+{
+	if (!tft_enable_) return;
+	int x, y, i;
+	//w *= 2;
+	in_tft = true;
+	int pos = 0;
+	bool first = true;
+	tft.setAddrWindow(ix, iy, ix + w * 2 * 8 - 1, iy + h * 2 - 1);
+
+	for (y = 0; y < h; y++)
+	{
+		uint16_t cbuf[320];
+		int idx = 0;
+		for (x = 0; x < w; x++)
+		{
+			uint8_t b = (pgm_read_byte(&bitmap[pos++]));
+			if (b & 0x80) { cbuf[idx++] = WHITE; cbuf[idx++] = WHITE; }
+			else { cbuf[idx++] = BLACK; cbuf[idx++] = BLACK; }
+			if (b & 0x40) { cbuf[idx++] = WHITE; cbuf[idx++] = WHITE; }
+			else { cbuf[idx++] = BLACK; cbuf[idx++] = BLACK; }
+			if (b & 0x20) { cbuf[idx++] = WHITE; cbuf[idx++] = WHITE; }
+			else { cbuf[idx++] = BLACK; cbuf[idx++] = BLACK; }
+			if (b & 0x10) { cbuf[idx++] = WHITE; cbuf[idx++] = WHITE; }
+			else { cbuf[idx++] = BLACK; cbuf[idx++] = BLACK; }
+			if (b & 0x08) { cbuf[idx++] = WHITE; cbuf[idx++] = WHITE; }
+			else { cbuf[idx++] = BLACK; cbuf[idx++] = BLACK; }
+			if (b & 0x04) { cbuf[idx++] = WHITE; cbuf[idx++] = WHITE; }
+			else { cbuf[idx++] = BLACK; cbuf[idx++] = BLACK; }
+			if (b & 0x02) { cbuf[idx++] = WHITE; cbuf[idx++] = WHITE; }
+			else { cbuf[idx++] = BLACK; cbuf[idx++] = BLACK; }
+			if (b & 0x01) { cbuf[idx++] = WHITE; cbuf[idx++] = WHITE; }
+			else { cbuf[idx++] = BLACK; cbuf[idx++] = BLACK; }
+		}
+		tft.pushColors(cbuf, idx, first); first = false;
+		tft.pushColors(cbuf, idx, first);
+	}
+	in_tft = false;
+}
+
 
 void tft_drawbitmap(int px, int py, int flags, const uint8_t bitmap[] PROGMEM)
 {
@@ -529,6 +563,11 @@ void tft_counter_inc(int x, int y, int *pcnt, int max)
 
 void chardraw_M(int x, int y)
 {
+}
+
+void drawVLine(int x0, int y0, int len)
+{
+	tft_drawline(x0, y0, x0, y0 + len, WHITE);
 }
 
 void drawHLine(int x0, int y0, int len) {

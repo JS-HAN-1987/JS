@@ -39,9 +39,9 @@
 extern int page;
 
 // For selective rendering within a Y range
-#define PAGE_OVER(ya)         ((ya) >= (page*LCD_PIXEL_HEIGHT) ) // Does the current page follow a region top?
-#define PAGE_UNDER(yb)        ((yb) <= (page+1)*LCD_PIXEL_HEIGHT - 1 ) // Does the current page precede a region bottom?
-#define PAGE_CONTAINS(ya, yb) ((yb) <= ((page+1)*LCD_PIXEL_HEIGHT - 1) && (ya) >= ((page*LCD_PIXEL_HEIGHT))) // Do two vertical regions overlap?
+#define PAGE_OVER(ya)         true//((ya) >= (page*LCD_PIXEL_HEIGHT) ) // Does the current page follow a region top?
+#define PAGE_UNDER(yb)        true//((yb) <= (page+1)*LCD_PIXEL_HEIGHT - 1 ) // Does the current page precede a region bottom?
+#define PAGE_CONTAINS(ya, yb) true//((yb) <= ((page+1)*LCD_PIXEL_HEIGHT - 1) && (ya) >= ((page*LCD_PIXEL_HEIGHT))) // Do two vertical regions overlap?
 
 
 

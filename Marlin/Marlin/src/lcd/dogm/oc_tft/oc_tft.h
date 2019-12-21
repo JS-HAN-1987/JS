@@ -49,6 +49,7 @@
 
 #define OC_TRANSPARENT_BACK 0x0001 // for tft_printf
 
+void oc_logo(void);
 void tft_init(void);
 void tft_clear(void);
 void tft_on(void);
@@ -59,10 +60,12 @@ void tft_drawtext(int x, int y, char *text, uint16_t color, int text_size);
 void tft_drawtextfmt(int x, int y, int text_size, int fcolor, int bcolor, char *fmt, ...);
 void tft_setbitmapcolor(uint16_t fcolor, uint16_t bcolor);
 void tft_drawbitmap(int px, int py, int flags, const uint8_t bitmap[] PROGMEM);
+void tft_drawbitmap2(int ix, int iy, int w, int h, const uint8_t bitmap[] PROGMEM);
 int tft_printf(int x, int y, int flags, char *fmt, ...);
 int tft_printstring(int x, int y, int flags, char* string);
 void tft_drawline(int x0, int y0, int x1, int y1, uint16_t color);
 void drawHLine(int x0, int y0, int len);
+void drawVLine(int x0, int y0, int len);
 void setPrintPos(int x, int y);
 void drawBox(int x, int y, int w, int h);
 void tft_put_int(int x);
