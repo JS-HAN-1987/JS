@@ -156,8 +156,8 @@
 
   static void oc_safe_yxhome(void)
   {
-	  homeaxis(Y);
-	  homeaxis(X);
+	  homeaxis(Y_AXIS);
+	  homeaxis(X_AXIS);
   }
 
 

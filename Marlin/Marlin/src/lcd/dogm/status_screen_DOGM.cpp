@@ -604,7 +604,7 @@ void MarlinUI::draw_status_screen() {
     //
     // SD Card Symbol
     //
-//    if (card.isFileOpen()) 
+    if (card.isFileOpen()) 
 	{ //EXTRAS_2_BASELINE
       // Upper box
 	  int x = INFO_FONT_WIDTH * 8;
@@ -644,16 +644,16 @@ void MarlinUI::draw_status_screen() {
         }
 			   		 
         if (progress_state == 0) {
-			{//if (progress_string[0]) {
+			if (progress_string[0]) {
 			  lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, progress_string);
             lcd_put_wchar('%');
           }
         }
-        else if (progress_state == 2 ){//&& estimation_string[0]) {
+        else if (progress_state == 2 && estimation_string[0]) {
           lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "R:");
 		  lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, estimation_string);
         }
-        else {//if (elapsed_string[0]) {
+        else if (elapsed_string[0]) {
           lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "E:");
           lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, elapsed_string);
         }
