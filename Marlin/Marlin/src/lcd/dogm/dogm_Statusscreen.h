@@ -591,7 +591,7 @@
       #endif
 
     #else
-      #define STATUS_HEATERS_HEIGHT 20*2
+      #define STATUS_HEATERS_HEIGHT 20 * 2
     #endif
 
   #endif
@@ -1371,7 +1371,7 @@
     #define STATUS_LOGO_Y _MIN(0, 10 - (STATUS_LOGO_HEIGHT) / 2)
   #endif
   #ifndef STATUS_LOGO_HEIGHT
-    #define STATUS_LOGO_HEIGHT (sizeof(status_logo_bmp) / (STATUS_LOGO_BYTEWIDTH) * 4)
+    #define STATUS_LOGO_HEIGHT (sizeof(status_logo_bmp) / (STATUS_LOGO_BYTEWIDTH))
   #endif
   //static_assert(
   //  sizeof(status_logo_bmp) == (STATUS_LOGO_BYTEWIDTH) * (STATUS_LOGO_HEIGHT),
@@ -1392,7 +1392,7 @@
     #if ENABLED(STATUS_COMBINE_HEATERS) && HAS_HEATED_BED && HOTENDS <= 4
       #define STATUS_HEATERS_X 5
     #else
-      #define STATUS_HEATERS_X 8 // Like the included bitmaps
+      #define STATUS_HEATERS_X 24 // Like the included bitmaps
     #endif
   #endif
 #endif
@@ -1508,10 +1508,10 @@
     #define TEST_BITMAP_ON  status_hotend_b_bmp
   #endif
   #ifndef STATUS_HEATERS_HEIGHT
-    #define STATUS_HEATERS_HEIGHT (sizeof(TEST_BITMAP_OFF) / (STATUS_HOTEND1_BYTEWIDTH) * 4)
+    #define STATUS_HEATERS_HEIGHT (sizeof(TEST_BITMAP_OFF) / (STATUS_HOTEND1_BYTEWIDTH))
   #endif
   #ifndef STATUS_HEATERS_Y
-    #define STATUS_HEATERS_Y (20 - (STATUS_HEATERS_HEIGHT))
+    #define STATUS_HEATERS_Y (INFO_FONT_HEIGHT)
   #endif
 
   //#define HOTEND0_BITMAP_SIZE (STATUS_HOTEND1_BYTEWIDTH) * (STATUS_HEATERS_HEIGHT)
@@ -1547,10 +1547,10 @@
     #define STATUS_HEATERS_BYTEWIDTH BW(STATUS_HEATERS_WIDTH)
   #endif
   #ifndef STATUS_HEATERS_HEIGHT
-    #define STATUS_HEATERS_HEIGHT (sizeof(status_heaters_bmp) / (STATUS_HEATERS_BYTEWIDTH)*4)
+    #define STATUS_HEATERS_HEIGHT (sizeof(status_heaters_bmp) / (STATUS_HEATERS_BYTEWIDTH))
   #endif
   #ifndef STATUS_HEATERS_Y
-    #define STATUS_HEATERS_Y (20 - (STATUS_HEATERS_HEIGHT))
+    #define STATUS_HEATERS_Y (INFO_FONT_HEIGHT)
   #endif
 
   //static_assert(
@@ -1579,9 +1579,9 @@
 
   #ifndef STATUS_CUTTER_HEIGHT
     #ifdef STATUS_CUTTER_ANIM
-      #define STATUS_CUTTER_HEIGHT(S) ((S) ? sizeof(status_cutter_on_bmp) / (STATUS_CUTTER_BYTEWIDTH) : sizeof(status_cutter_bmp) / (STATUS_CUTTER_BYTEWIDTH)*4)
+      #define STATUS_CUTTER_HEIGHT(S) ((S) ? sizeof(status_cutter_on_bmp) / (STATUS_CUTTER_BYTEWIDTH) : sizeof(status_cutter_bmp) / (STATUS_CUTTER_BYTEWIDTH))
     #else
-      #define STATUS_CUTTER_HEIGHT(S) (sizeof(status_cutter_bmp) / (STATUS_CUTTER_BYTEWIDTH)*4)
+      #define STATUS_CUTTER_HEIGHT(S) (sizeof(status_cutter_bmp) / (STATUS_CUTTER_BYTEWIDTH))
     #endif
   #endif
 
@@ -1624,9 +1624,9 @@
 
   #ifndef STATUS_CHAMBER_HEIGHT
     #ifdef STATUS_CHAMBER_ANIM
-      #define STATUS_CHAMBER_HEIGHT(S) ((S) ? sizeof(status_chamber_on_bmp) / (STATUS_CHAMBER_BYTEWIDTH) : sizeof(status_chamber_bmp) / (STATUS_CHAMBER_BYTEWIDTH)*4)
+      #define STATUS_CHAMBER_HEIGHT(S) ((S) ? sizeof(status_chamber_on_bmp) / (STATUS_CHAMBER_BYTEWIDTH) : sizeof(status_chamber_bmp) / (STATUS_CHAMBER_BYTEWIDTH))
     #else
-      #define STATUS_CHAMBER_HEIGHT(S) (sizeof(status_chamber_bmp) / (STATUS_CHAMBER_BYTEWIDTH)*4)
+      #define STATUS_CHAMBER_HEIGHT(S) (sizeof(status_chamber_bmp) / (STATUS_CHAMBER_BYTEWIDTH))
     #endif
   #endif
 
@@ -1665,9 +1665,9 @@
 
   #ifndef STATUS_BED_HEIGHT
     #ifdef STATUS_BED_ANIM
-      #define STATUS_BED_HEIGHT(S) ((S) ? sizeof(status_bed_on_bmp) / (STATUS_BED_BYTEWIDTH) : sizeof(status_bed_bmp) / (STATUS_BED_BYTEWIDTH)*4)
+      #define STATUS_BED_HEIGHT(S) ((S) ? sizeof(status_bed_on_bmp) / (STATUS_BED_BYTEWIDTH) : sizeof(status_bed_bmp) / (STATUS_BED_BYTEWIDTH))
     #else
-      #define STATUS_BED_HEIGHT(S) (sizeof(status_bed_bmp) / (STATUS_BED_BYTEWIDTH)*4)
+      #define STATUS_BED_HEIGHT(S) (sizeof(status_bed_bmp) / (STATUS_BED_BYTEWIDTH))
     #endif
   #endif
 
@@ -1708,10 +1708,10 @@
     #define STATUS_FAN_TEXT_X (STATUS_FAN_X - 1)
   #endif
   #ifndef STATUS_FAN_TEXT_Y
-    #define STATUS_FAN_TEXT_Y 28
+    #define STATUS_FAN_TEXT_Y STATUS_FAN_Y + STATUS_FAN_HEIGHT*2
   #endif
   #ifndef STATUS_FAN_HEIGHT
-    #define STATUS_FAN_HEIGHT (sizeof(status_fan0_bmp) / (STATUS_FAN_BYTEWIDTH)*4)
+    #define STATUS_FAN_HEIGHT (sizeof(status_fan0_bmp) / (STATUS_FAN_BYTEWIDTH))
   #endif
   //#define FAN_BMP_SIZE (STATUS_FAN_BYTEWIDTH) * (STATUS_FAN_HEIGHT)
   //static_assert(sizeof(status_fan0_bmp) == FAN_BMP_SIZE, "Status fan bitmap (status_fan0_bmp) dimensions don't match data.");
