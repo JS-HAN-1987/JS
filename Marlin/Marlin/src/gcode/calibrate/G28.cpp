@@ -113,7 +113,57 @@
 
 #if ENABLED(Z_SAFE_HOMING)
 
+  static void oc_probe_down(void) {
+	  do_blocking_move_to_z(25);
+	  do_blocking_move_to_xy(0, Y_PROBE_DOWN_POS);
+  }
+
+  bool oc_endstop_triggered_z(void)
+  {
+#if defined(Z_MIN_PIN) && Z_MIN_PIN > -1
+	  return ((READ(Z_MIN_PIN) ^ Z_MIN_ENDSTOP_INVERTING) ? true : false);
+#endif
+	  return false;
+  }
+
+  static void oc_probe_safety_check(void)
+  {
+#ifdef USE_PROBE_SAFETY_CHECK
+	  do_blocking_move_to_z(PROBE_TEST_HEIGHT);
+	  //delay(1000);
+	  if (!oc_endstop_triggered_z()) {
+		  LCD_MESSAGEPGM(MSG_ERR_Z_HOMING);
+		  SERIAL_ECHO_MSG(MSG_ERR_Z_HOMING_SER);
+		  // otm_event(EVENT_PROBE_ERROR, 0, 0);
+		 // delay(1000);
+		 // while (!oc_endstop_triggered_z());
+		 // otm_event(EVENT_PROBE_ERROR_RESOLVED, 0, 0);
+		 // while (!otm_user_confirmed_probe_error()) lcd_update(LUT_ERROR_RESOLVED);;
+	  }
+#else
+	  do_blocking_move_to_z(5);
+#endif
+  }
+
+  static void oc_post_g28(void)
+  {
+	  
+	do_blocking_move_to_z(PROBE_UP_HEIGHT); // insert probe
+	oc_probe_safety_check();
+	do_blocking_move_to_xy(Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT);
+	  
+  }
+
+  static void oc_safe_yxhome(void)
+  {
+	  homeaxis(Y);
+	  homeaxis(X);
+  }
+
+
   inline void home_z_safely() {
+	  oc_safe_yxhome();
+	  oc_probe_down();
 
     // Disallow Z homing if X or Y are unknown
     if (!TEST(axis_known_position, X_AXIS) || !TEST(axis_known_position, Y_AXIS)) {
@@ -157,6 +207,7 @@
       SERIAL_ECHO_MSG(MSG_ZPROBE_OUT_SER);
     }
 
+	oc_post_g28();
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("<<< home_z_safely");
   }
 

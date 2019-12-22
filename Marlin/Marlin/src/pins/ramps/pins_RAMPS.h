@@ -61,351 +61,115 @@
   #define BOARD_INFO_NAME "RAMPS 1.4"
 #endif
 
-//
-// Servos
-//
-#ifndef SERVO0_PIN
-  #ifdef IS_RAMPS_13
-    #define SERVO0_PIN      7
-  #else
-    #define SERVO0_PIN     11
-  #endif
-#endif
-#ifndef SERVO1_PIN
-  #define SERVO1_PIN        6
-#endif
-#ifndef SERVO2_PIN
-  #define SERVO2_PIN        5
-#endif
-#ifndef SERVO3_PIN
-  #define SERVO3_PIN        4
-#endif
 
-//
-// Limit Switches
-//
-#ifndef X_STOP_PIN
-  #ifndef X_MIN_PIN
-    #define X_MIN_PIN       3
-  #endif
-  #ifndef X_MAX_PIN
-    #define X_MAX_PIN       2
-  #endif
-#endif
-#ifndef Y_STOP_PIN
-  #ifndef Y_MIN_PIN
-    #define Y_MIN_PIN      14
-  #endif
-  #ifndef Y_MAX_PIN
-    #define Y_MAX_PIN      15
-  #endif
-#endif
-#ifndef Z_STOP_PIN
-  #ifndef Z_MIN_PIN
-    #define Z_MIN_PIN      18
-  #endif
-  #ifndef Z_MAX_PIN
-    #define Z_MAX_PIN      19
-  #endif
-#endif
+#define LARGE_FLASH true
 
-//
-// Z Probe (when not Z_MIN_PIN)
-//
-#ifndef Z_MIN_PROBE_PIN
-  #define Z_MIN_PROBE_PIN  32
-#endif
-
-//
-// Steppers
-//
 #define X_STEP_PIN         54
 #define X_DIR_PIN          55
 #define X_ENABLE_PIN       38
-#ifndef X_CS_PIN
-  #define X_CS_PIN         53
-#endif
+#define X_MIN_PIN           3
+#define X_MAX_PIN           2
 
 #define Y_STEP_PIN         60
 #define Y_DIR_PIN          61
 #define Y_ENABLE_PIN       56
-#ifndef Y_CS_PIN
-  #define Y_CS_PIN         49
+#if defined(MQ_S1) || defined(MQ_S4) || defined(MQ_P1)
+#define Y_MIN_PIN          -1
+#define Y_MAX_PIN          14
+#else
+#define Y_MIN_PIN          14
+#define Y_MAX_PIN          -1
 #endif
 
 #define Z_STEP_PIN         46
 #define Z_DIR_PIN          48
 #define Z_ENABLE_PIN       62
-#ifndef Z_CS_PIN
-  #define Z_CS_PIN         40
-#endif
+#define Z_MIN_PIN          18
+#define Z_MAX_PIN          -1 //19
+
+#define Y2_STEP_PIN        36
+#define Y2_DIR_PIN         34
+#define Y2_ENABLE_PIN      30
+
+#define Z2_STEP_PIN        36
+#define Z2_DIR_PIN         34
+#define Z2_ENABLE_PIN      30
 
 #define E0_STEP_PIN        26
 #define E0_DIR_PIN         28
 #define E0_ENABLE_PIN      24
-#ifndef E0_CS_PIN
-  #define E0_CS_PIN        42
-#endif
 
 #define E1_STEP_PIN        36
 #define E1_DIR_PIN         34
 #define E1_ENABLE_PIN      30
-#ifndef E1_CS_PIN
-  #define E1_CS_PIN        44
-#endif
 
-//
-// Temperature Sensors
-//
-#ifndef TEMP_0_PIN
-  #define TEMP_0_PIN       13   // Analog Input
-#endif
-#ifndef TEMP_1_PIN
-  #define TEMP_1_PIN       15   // Analog Input
-#endif
-#ifndef TEMP_BED_PIN
-  #define TEMP_BED_PIN     14   // Analog Input
-#endif
-
-// SPI for Max6675 or Max31855 Thermocouple
-#if DISABLED(SDSUPPORT)
-  #define MAX6675_SS_PIN   66   // Don't use 53 if there is even the remote possibility of using Display/SD card
-#else
-  #define MAX6675_SS_PIN   66   // Don't use 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
-#endif
-
-//
-// Augmentation for auto-assigning RAMPS plugs
-//
-#if NONE(IS_RAMPS_EEB, IS_RAMPS_EEF, IS_RAMPS_EFB, IS_RAMPS_EFF, IS_RAMPS_SF) && !PIN_EXISTS(MOSFET_D)
-  #if HOTENDS > 1
-    #if TEMP_SENSOR_BED
-      #define IS_RAMPS_EEB
-    #else
-      #define IS_RAMPS_EEF
-    #endif
-  #elif TEMP_SENSOR_BED
-    #define IS_RAMPS_EFB
-  #else
-    #define IS_RAMPS_EFF
-  #endif
-#endif
-
-//
-// Heaters / Fans
-//
-#ifndef MOSFET_D_PIN
-  #define MOSFET_D_PIN     -1
-#endif
-#ifndef RAMPS_D8_PIN
-  #define RAMPS_D8_PIN      8
-#endif
-#ifndef RAMPS_D9_PIN
-  #define RAMPS_D9_PIN      9
-#endif
-#ifndef RAMPS_D10_PIN
-  #define RAMPS_D10_PIN    10
-#endif
-
-#define HEATER_0_PIN       RAMPS_D10_PIN
-
-#if ENABLED(IS_RAMPS_EFB)                      // Hotend, Fan, Bed
-  #define HEATER_BED_PIN   RAMPS_D8_PIN
-  #define FAN_PIN		   RAMPS_D9_PIN
-#elif ENABLED(IS_RAMPS_EEF)                    // Hotend, Hotend, Fan
-  #define HEATER_1_PIN     RAMPS_D9_PIN
-#elif ENABLED(IS_RAMPS_EEB)                    // Hotend, Hotend, Bed
-  #define HEATER_1_PIN     RAMPS_D9_PIN
-  #define HEATER_BED_PIN   RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_EFF)                    // Hotend, Fan, Fan
-  #define FAN1_PIN         RAMPS_D8_PIN
-#elif DISABLED(IS_RAMPS_SF)                    // Not Spindle, Fan (i.e., "EFBF" or "EFBE")
-  #define HEATER_BED_PIN   RAMPS_D8_PIN
-  #if HOTENDS == 1
-    #define FAN1_PIN       MOSFET_D_PIN
-  #else
-    #define HEATER_1_PIN   MOSFET_D_PIN
-  #endif
-#endif
-
-#ifndef FAN_PIN
-  #if EITHER(IS_RAMPS_EFB, IS_RAMPS_EFF)          // Hotend, Fan, Bed or Hotend, Fan, Fan
-    #define FAN_PIN        RAMPS_D9_PIN
-  #elif EITHER(IS_RAMPS_EEF, IS_RAMPS_SF)         // Hotend, Hotend, Fan or Spindle, Fan
-    #define FAN_PIN        RAMPS_D8_PIN
-  #elif ENABLED(IS_RAMPS_EEB)                  // Hotend, Hotend, Bed
-    #define FAN_PIN         4                  // IO pin. Buffer needed
-  #else                                        // Non-specific are "EFB" (i.e., "EFBF" or "EFBE")
-    #define FAN_PIN        RAMPS_D9_PIN
-  #endif
-#endif
-
-//
-// Misc. Functions
-//
+#define SDPOWER            -1
 #define SDSS               53
 #define LED_PIN            13
 
-#ifndef FILWIDTH_PIN
-  #define FILWIDTH_PIN      5   // Analog Input on AUX2
+#if MB(RAMPS_13_EEB) && defined(FILAMENT_SENSOR)  // FMM added for Filament Extruder
+  // define analog pin for the filament width sensor input
+  // Use the RAMPS 1.4 Analog input 5 on the AUX2 connector
+  #define FILWIDTH_PIN        5
 #endif
 
-// RAMPS 1.4 DIO 4 on the servos connector
-#ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN    4
+#if MB(RAMPS_13_EFB) || MB(RAMPS_13_EFF)
+  #define FAN_PIN            9 // (Sprinter config)
+  #if MB(RAMPS_13_EFF)
+    #define CONTROLLERFAN_PIN  -1 // Pin used for the fan to cool controller
+  #endif
+#elif MB(RAMPS_13_EEF)
+  #define FAN_PIN            8
+#else
+  #define FAN_PIN            4 // IO pin. Buffer needed
 #endif
 
-#ifndef PS_ON_PIN
-  #define PS_ON_PIN        12
+#define PS_ON_PIN          12
+
+#if defined(REPRAP_DISCOUNT_SMART_CONTROLLER) || defined(G3D_PANEL)
+  #define KILL_PIN           41
+#else
+  #define KILL_PIN           -1
 #endif
 
-#if ENABLED(CASE_LIGHT_ENABLE) && !defined(CASE_LIGHT_PIN) && !defined(SPINDLE_LASER_ENA_PIN)
-  #if NUM_SERVOS <= 1 // Prefer the servo connector
-    #define CASE_LIGHT_PIN  6   // Hardware PWM
-  #elif HAS_FREE_AUX2_PINS
-    #define CASE_LIGHT_PIN 44   // Hardware PWM
-  #endif
+#if MB(RAMPS_13_EFF)
+  #define HEATER_0_PIN       8
+#else
+  #define HEATER_0_PIN       10   // EXTRUDER 1
 #endif
 
-//
-// M3/M4/M5 - Spindle/Laser Control
-//
-#if HAS_CUTTER && !defined(SPINDLE_LASER_ENA_PIN)
-  #if !NUM_SERVOS                         // Use servo connector if possible
-    #define SPINDLE_LASER_ENA_PIN     4   // Pullup or pulldown!
-    #define SPINDLE_LASER_PWM_PIN     6   // Hardware PWM
-    #define SPINDLE_DIR_PIN           5
-  #elif HAS_FREE_AUX2_PINS
-    #define SPINDLE_LASER_ENA_PIN    40   // Pullup or pulldown!
-    #define SPINDLE_LASER_PWM_PIN    44   // Hardware PWM
-    #define SPINDLE_DIR_PIN          65
-  #else
-    #error "No auto-assignable Spindle/Laser pins available."
-  #endif
+#if MB(RAMPS_13_EFB)
+  #define HEATER_1_PIN       -1
+#else
+  #define HEATER_1_PIN       9    // EXTRUDER 2 (FAN On Sprinter)
 #endif
 
-//
-// TMC software SPI
-//
-#if ENABLED(TMC_USE_SW_SPI)
-  #ifndef TMC_SW_MOSI
-    #define TMC_SW_MOSI    66
-  #endif
-  #ifndef TMC_SW_MISO
-    #define TMC_SW_MISO    44
-  #endif
-  #ifndef TMC_SW_SCK
-    #define TMC_SW_SCK     64
-  #endif
+#define HEATER_2_PIN       -1
+
+#define TEMP_0_PIN         13   // ANALOG NUMBERING
+#define TEMP_1_PIN         15   // ANALOG NUMBERING
+#define TEMP_2_PIN         -1   // ANALOG NUMBERING
+
+#if MB(RAMPS_13_EFF) || MB(RAMPS_13_EEF)
+  #define HEATER_BED_PIN     -1    // NO BED
+#else
+  #define HEATER_BED_PIN     8    // BED
 #endif
 
-#if HAS_TMC220x
-  /**
-   * TMC2208/TMC2209 stepper drivers
-   *
-   * Hardware serial communication ports.
-   * If undefined software serial is used according to the pins below
-   */
-  //#define X_HARDWARE_SERIAL  Serial1
-  //#define X2_HARDWARE_SERIAL Serial1
-  //#define Y_HARDWARE_SERIAL  Serial1
-  //#define Y2_HARDWARE_SERIAL Serial1
-  //#define Z_HARDWARE_SERIAL  Serial1
-  //#define Z2_HARDWARE_SERIAL Serial1
-  //#define E0_HARDWARE_SERIAL Serial1
-  //#define E1_HARDWARE_SERIAL Serial1
-  //#define E2_HARDWARE_SERIAL Serial1
-  //#define E3_HARDWARE_SERIAL Serial1
-  //#define E4_HARDWARE_SERIAL Serial1
+#define TEMP_BED_PIN       14   // ANALOG NUMBERING
 
-  //
-  // Software serial
-  //
-
-  #ifndef X_SERIAL_TX_PIN
-    #define X_SERIAL_TX_PIN  40
-  #endif
-  #ifndef X_SERIAL_RX_PIN
-    #define X_SERIAL_RX_PIN  63
-  #endif
-  #ifndef X2_SERIAL_TX_PIN
-    #define X2_SERIAL_TX_PIN -1
-  #endif
-  #ifndef X2_SERIAL_RX_PIN
-    #define X2_SERIAL_RX_PIN -1
-  #endif
-
-  #ifndef Y_SERIAL_TX_PIN
-    #define Y_SERIAL_TX_PIN  59
-  #endif
-  #ifndef Y_SERIAL_RX_PIN
-    #define Y_SERIAL_RX_PIN  64
-  #endif
-  #ifndef Y2_SERIAL_TX_PIN
-    #define Y2_SERIAL_TX_PIN -1
-  #endif
-  #ifndef Y2_SERIAL_RX_PIN
-    #define Y2_SERIAL_RX_PIN -1
-  #endif
-
-  #ifndef Z_SERIAL_TX_PIN
-    #define Z_SERIAL_TX_PIN  42
-  #endif
-  #ifndef Z_SERIAL_RX_PIN
-    #define Z_SERIAL_RX_PIN  65
-  #endif
-  #ifndef Z2_SERIAL_TX_PIN
-    #define Z2_SERIAL_TX_PIN -1
-  #endif
-  #ifndef Z2_SERIAL_RX_PIN
-    #define Z2_SERIAL_RX_PIN -1
-  #endif
-
-  #ifndef E0_SERIAL_TX_PIN
-    #define E0_SERIAL_TX_PIN 44
-  #endif
-  #ifndef E0_SERIAL_RX_PIN
-    #define E0_SERIAL_RX_PIN 66
-  #endif
-  #ifndef E1_SERIAL_TX_PIN
-    #define E1_SERIAL_TX_PIN -1
-  #endif
-  #ifndef E1_SERIAL_RX_PIN
-    #define E1_SERIAL_RX_PIN -1
-  #endif
-  #ifndef E2_SERIAL_TX_PIN
-    #define E2_SERIAL_TX_PIN -1
-  #endif
-  #ifndef E2_SERIAL_RX_PIN
-    #define E2_SERIAL_RX_PIN -1
-  #endif
-  #ifndef E3_SERIAL_TX_PIN
-    #define E3_SERIAL_TX_PIN -1
-  #endif
-  #ifndef E3_SERIAL_RX_PIN
-    #define E3_SERIAL_RX_PIN -1
-  #endif
-  #ifndef E4_SERIAL_TX_PIN
-    #define E4_SERIAL_TX_PIN -1
-  #endif
-  #ifndef E4_SERIAL_RX_PIN
-    #define E4_SERIAL_RX_PIN -1
+#ifdef NUM_SERVOS
+  #define SERVO0_PIN         11
+  #if NUM_SERVOS > 1
+    #define SERVO1_PIN        6
+    #if NUM_SERVOS > 2
+      #define SERVO2_PIN      5
+      #if NUM_SERVOS > 3
+        #define SERVO3_PIN    4
+      #endif
+    #endif
   #endif
 #endif
-
-//
-// Průša i3 MK2 Multiplexer Support
-//
-#ifndef E_MUX0_PIN
-  #define E_MUX0_PIN 40   // Z_CS_PIN
-#endif
-#ifndef E_MUX1_PIN
-  #define E_MUX1_PIN 42   // E0_CS_PIN
-#endif
-#ifndef E_MUX2_PIN
-  #define E_MUX2_PIN 44   // E1_CS_PIN
-#endif
-
 //////////////////////////
 // LCDs and Controllers //
 //////////////////////////
@@ -712,3 +476,18 @@
   #endif // NEWPANEL
 
 #endif // HAS_SPI_LCD
+
+
+// SPI for Max6675 Thermocouple
+#ifndef SDSUPPORT
+  #define MAX6675_SS       66 // Do not use pin 53 if there is even the remote possibility of using Display/SD card
+#else
+  #define MAX6675_SS       66 // Do not use pin 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
+#endif
+
+#ifndef SDSUPPORT
+  // these pins are defined in the SD library if building with SD support
+  #define SCK_PIN          52
+  #define MISO_PIN         50
+  #define MOSI_PIN         51
+#endif
