@@ -162,8 +162,8 @@ void MarlinUI::draw_hotend_status(const uint8_t row, const uint8_t extruder) {
 
 // Set the colors for a menu item based on whether it is selected
 static bool mark_as_selected(const uint8_t row, const bool sel) {	
-	row_y2 = row * (MENU_FONT_HEIGHT) + 5;
-	row_y1 = row_y2 + MENU_FONT_HEIGHT - 5;
+	row_y2 = row * (MENU_FONT_HEIGHT) + 10;
+	row_y1 = row_y2 + MENU_FONT_HEIGHT;
 	
 	if (!PAGE_CONTAINS(row_y2, row_y1)) 
 		return false;
@@ -192,7 +192,11 @@ void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t st
 
 		if ((style & SS_CENTER) && !valstr) {
 			int8_t pad = (LCD_WIDTH - utf8_strlen_P(pstr)) / 2;
-			while (--pad >= 0) { lcd_put_wchar(' '); n--; }
+			while (--pad >= 0) { 
+				if( lcd_put_wchar(' ') >= LCD_PIXEL_WIDTH)
+					break ;
+				n--; 
+			}
 		}
 		n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH) * (MENU_FONT_WIDTH);
 		
@@ -210,7 +214,7 @@ void MenuItemBase::_draw(const bool sel, const uint8_t row, PGM_P const pstr, co
 	SERIAL_ECHO(" ");
 	SERIAL_ECHOLN((int)row);
 	if (mark_as_selected(row, sel)) {		
-		int n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2) * (MENU_FONT_WIDTH);
+		lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2) * (MENU_FONT_WIDTH);
 		//while (n > MENU_FONT_WIDTH)
 		//	n -= lcd_put_wchar(' ');
 		lcd_put_wchar(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH*3), row_y2, post_char);
@@ -320,13 +324,24 @@ void MenuItem_confirm::draw_select_screen(PGM_P const yes, PGM_P const no, const
 #if ENABLED(SDSUPPORT)
 
 void MenuItem_sdbase::draw(const bool sel, const uint8_t row, PGM_P const, CardReader& theCard, const bool isDir) {
-	SERIAL_ECHO("7");
+	SERIAL_ECHO("7 ");
+	
 	if (mark_as_selected(row, sel)) {
-		if (isDir) lcd_put_wchar(LCD_STR_FOLDER[0]);
+		if (isDir) 
+			lcd_put_wchar(LCD_STR_FOLDER[0]);
+		
 		constexpr uint8_t maxlen = LCD_WIDTH - 1;
 		const uint16_t pixw = maxlen * (MENU_FONT_WIDTH);
 		uint16_t n = pixw - lcd_put_u8str_max(ui.scrolled_filename(theCard, maxlen, row, sel), pixw);
-		while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+		
+		n = n/MENU_FONT_WIDTH;
+		SERIAL_ECHO(n);
+		while (n > 0)
+		{
+			if( lcd_put_wchar(' ') >= LCD_PIXEL_WIDTH)
+				break ;
+			n--;
+		}
 	}
 	
 }

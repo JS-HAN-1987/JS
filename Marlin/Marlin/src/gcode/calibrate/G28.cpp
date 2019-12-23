@@ -129,17 +129,23 @@
   static void oc_probe_safety_check(void)
   {
 #ifdef USE_PROBE_SAFETY_CHECK
+		SERIAL_ECHOLN("oc_probe_safety_check");
 	  do_blocking_move_to_z(PROBE_TEST_HEIGHT);
-	  //delay(1000);
+	  delay(300);
 	  if (!oc_endstop_triggered_z()) {
-		  LCD_MESSAGEPGM(MSG_ERR_Z_HOMING);
-		  SERIAL_ECHO_MSG(MSG_ERR_Z_HOMING_SER);
+		  SERIAL_ECHO("NO oc_endstop_triggered_z!!!");
+		  //LCD_MESSAGEPGM(MSG_ERR_Z_HOMING);
+		  //SERIAL_ECHO_MSG(MSG_ERR_Z_HOMING_SER);
+		  LCD_MESSAGEPGM(MSG_ZPROBE_OUT);
+		  SERIAL_ECHO_MSG(MSG_ZPROBE_OUT_SER);
 		  // otm_event(EVENT_PROBE_ERROR, 0, 0);
 		 // delay(1000);
-		 // while (!oc_endstop_triggered_z());
+		  //while (!oc_endstop_triggered_z());
 		 // otm_event(EVENT_PROBE_ERROR_RESOLVED, 0, 0);
 		 // while (!otm_user_confirmed_probe_error()) lcd_update(LUT_ERROR_RESOLVED);;
 	  }
+	  else
+		SERIAL_ECHO("oc_endstop_triggered_z!!"); //It's collect.
 #else
 	  do_blocking_move_to_z(5);
 #endif
@@ -147,22 +153,22 @@
 
   static void oc_post_g28(void)
   {
-	  
+	SERIAL_ECHO("oc_post_g28");
 	do_blocking_move_to_z(PROBE_UP_HEIGHT); // insert probe
 	oc_probe_safety_check();
 	do_blocking_move_to_xy(Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT);
 	  
   }
 
-  static void oc_safe_yxhome(void)
+  static void oc_safe_xyhome(void)
   {
-	  homeaxis(Y_AXIS);
 	  homeaxis(X_AXIS);
+	  homeaxis(Y_AXIS);
   }
 
 
   inline void home_z_safely() {
-	  oc_safe_yxhome();
+	  oc_safe_xyhome();
 	  oc_probe_down();
 
     // Disallow Z homing if X or Y are unknown
@@ -260,7 +266,13 @@
  *
  */
 void GcodeSuite::G28(const bool always_home_all) {
+
+//  #if ENABLED(DEBUG_LEVELING_FEATURE)
+//    marlin_debug_flags |= MARLIN_DEBUG_LEVELING;
+//  #endif
+	
   if (DEBUGGING(LEVELING)) {
+	  SERIAL_ECHO("DEBUGGING(LEVELING)");
     DEBUG_ECHOLNPGM(">>> G28");
     log_machine_info();
   }

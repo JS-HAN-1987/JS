@@ -123,7 +123,6 @@
 #define PROGRESS_BAR_WIDTH (LCD_PIXEL_WIDTH - PROGRESS_BAR_X)
 
 FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, const uint8_t ty) {
-  
   const char *str = i16tostr3(temp);
   const uint8_t len = str[0] != ' ' ? 3 : str[1] != ' ' ? 2 : 1;
   lcd_put_u8str(tx - len * (INFO_FONT_WIDTH) / 2 + 1, ty, &str[3-len]);
@@ -143,8 +142,8 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
     const bool isHeat = HOTEND_ALT(heater);
 
     const uint8_t tx = STATUS_HOTEND_TEXT_X(heater);
-	SERIAL_ECHO("tx:");
-	SERIAL_ECHOLN(tx);
+	//SERIAL_ECHO("tx:");
+	//SERIAL_ECHOLN(tx);
 
     const float temp = thermalManager.degHotend(heater),
               target = thermalManager.degTargetHotend(heater);
@@ -407,7 +406,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
 }
 
 void MarlinUI::draw_status_screen() {
-	SERIAL_ECHOLN("draw_status_screen");
+	//SERIAL_ECHOLN("draw_status_screen");
   static char xstring[5
     #if ENABLED(LCD_SHOW_E_TOTAL)
       + 7
@@ -788,7 +787,11 @@ void MarlinUI::draw_status_message(const bool blink) {
     if (slen <= LCD_WIDTH) {
       // The string fits within the line. Print with no scrolling
       lcd_put_u8str(status_message);
-      while (slen < LCD_WIDTH) { lcd_put_wchar(' '); ++slen; }
+      while (slen < LCD_WIDTH) { 
+		if( lcd_put_wchar(' ') >= LCD_PIXEL_WIDTH)
+			break ;
+		++slen; 
+		}
     }
     else {
       // String is longer than the available space
@@ -825,7 +828,11 @@ void MarlinUI::draw_status_message(const bool blink) {
     lcd_put_u8str_max(status_message, LCD_PIXEL_WIDTH);
 
     // Fill the rest with spaces
-    for (; slen < LCD_WIDTH; ++slen) lcd_put_wchar(' ');
+    for (; slen < LCD_WIDTH; ++slen)
+	{
+		if( lcd_put_wchar(' ') >= LCD_PIXEL_WIDTH)
+			break ;
+	}
 
   #endif // !STATUS_MESSAGE_SCROLLING
   

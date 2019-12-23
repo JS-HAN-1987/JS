@@ -51,7 +51,7 @@ int lcd_put_wchar_max(wchar_t c, pixel_len_t max_length) {
   if( isOutofRange( x, y))
   {
 	SERIAL_ECHO("lcd_put_wchar_max::outofRange ");
-	SERIAL_ECHOLN(x); SERIAL_ECHOLN(y);
+	SERIAL_ECHO((char)c); SERIAL_ECHO(' '); SERIAL_ECHO(x); SERIAL_ECHO(' '); SERIAL_ECHOLN(y);
 	return LCD_PIXEL_WIDTH;
   }
 
@@ -68,6 +68,7 @@ int lcd_put_u8str_max(const char * utf8_str, pixel_len_t max_length) {
   uint16_t x = getPrintCol(), y = getPrintRow();
   if( isOutofRange( x, y))
   {
+	  SERIAL_ECHO("lcd_put_u8str_max::outofRange ");
 	SERIAL_ECHOLN(x); SERIAL_ECHOLN(y);
 	return LCD_PIXEL_WIDTH;
   }
@@ -80,6 +81,7 @@ int lcd_put_BIGNUM_u8str_max(const char* utf8_str, pixel_len_t max_length) {
 	uint16_t x = getPrintCol(), y = getPrintRow();
 	if (isOutofRange(x, y))
 	{
+		SERIAL_ECHO("lcd_put_BIGNUM_u8str_max::outofRange ");
 		SERIAL_ECHOLN(x); SERIAL_ECHOLN(y);
 		return LCD_PIXEL_WIDTH;
 	}
@@ -92,6 +94,7 @@ int lcd_put_u8str_max_P(PGM_P utf8_str_P, pixel_len_t max_length) {
 uint16_t x = getPrintCol(), y = getPrintRow();
   if( isOutofRange( x, y))
   {
+	  SERIAL_ECHO("lcd_put_u8str_max_P::outofRange ");
 	SERIAL_ECHOLN(x); SERIAL_ECHOLN(y);
 	return LCD_PIXEL_WIDTH;
   }  

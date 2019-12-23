@@ -1381,7 +1381,7 @@
     #endif
   #endif
   #ifndef NOZZLE_TO_PROBE_OFFSET
-    #define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
+    #define NOZZLE_TO_PROBE_OFFSET { 0, 31, -18 }
   #endif
 #else
   #undef NOZZLE_TO_PROBE_OFFSET
