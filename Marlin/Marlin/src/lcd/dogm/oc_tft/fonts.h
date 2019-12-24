@@ -316,3 +316,6 @@ static const uint8_t font_4right[] PROGMEM = {
 static const uint8_t font_42x44_space[] PROGMEM = {
 	#include "new_fonts/4.big/font42x44_space.h"
 };
+static const uint8_t font_space[] PROGMEM = {
+	#include "new_fonts/3.special/font_space.h"
+};
