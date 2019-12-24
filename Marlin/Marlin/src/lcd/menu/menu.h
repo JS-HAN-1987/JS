@@ -317,7 +317,6 @@ class MenuItem_bool : public MenuEditItemBase {
   scroll_screen(IS_MENU ? 1 : LCD_HEIGHT, IS_MENU); \
   int8_t _menuLineNr = encoderTopLine, _thisItemNr; \
   bool _skipStatic = IS_MENU;                       \
-  if( IS_MENU) ui.clear_lcd();						\
   for (int8_t _lcdLineNr = 0; _lcdLineNr < LCD_HEIGHT; _menuLineNr++, _lcdLineNr++) { \
      _thisItemNr = 0
 

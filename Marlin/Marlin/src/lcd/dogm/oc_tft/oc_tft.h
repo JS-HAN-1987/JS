@@ -64,7 +64,7 @@ void tft_drawbitmap2(int ix, int iy, int w, int h, const uint8_t bitmap[] PROGME
 int tft_printf(int x, int y, int flags, char *fmt, ...);
 int tft_printstring(int x, int y, int flags, char* string);
 void tft_drawline(int x0, int y0, int x1, int y1, uint16_t color);
-void drawHLine(int x0, int y0, int len);
+void drawHLine(int x0, int y0, int len, uint16_t bcolor);
 void drawVLine(int x0, int y0, int len);
 void setPrintPos(int x, int y);
 void drawBox(int x, int y, int w, int h);

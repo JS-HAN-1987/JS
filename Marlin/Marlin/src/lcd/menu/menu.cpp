@@ -349,6 +349,7 @@ void MarlinUI::synchronize(PGM_P const msg/*=nullptr*/) {
  *   _thisItemNr is the index of each MENU_ITEM or STATIC_ITEM
  *   screen_items is the total number of items in the menu (after one call)
  */
+static int8_t prev_encoderTopLine = 0;
 void scroll_screen(const uint8_t limit, const bool is_menu) {
   ui.encoder_direction_menus();
   ENCODER_RATE_MULTIPLY(false);
@@ -365,13 +366,15 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
     NOMORE(encoderTopLine, encoderLine);
 	if (encoderLine >= encoderTopLine + LCD_HEIGHT)
       encoderTopLine = encoderLine - LCD_HEIGHT + 1;
-	SERIAL_ECHO("encoderLine:");
-	SERIAL_ECHO(encoderLine);
-	SERIAL_ECHO("encoderTopLine:");
-	SERIAL_ECHOLN(encoderTopLine);
   }
   else
     encoderTopLine = encoderLine;
+  
+  if (prev_encoderTopLine != encoderTopLine)
+  {
+	ui.clear_lcd();
+	prev_encoderTopLine = encoderTopLine;
+  }
 }
 
 #if HAS_BUZZER

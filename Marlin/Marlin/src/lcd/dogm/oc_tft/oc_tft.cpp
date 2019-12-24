@@ -305,7 +305,10 @@ void tft_drawbitmap(int px, int py, int flags, const uint8_t bitmap[] PROGMEM)
 static int tft_printletter(int x, int y, int flags, const uint8_t bitmap[] PROGMEM, bool draw)
 {
 	uint16_t w = pgm_read_byte(&bitmap[4]) | (pgm_read_byte(&bitmap[5]) << 8);
-	if (draw) tft_drawbitmap(x, y, flags, bitmap);
+	if (draw) {
+		//tft_fillrect(x, y, w, 24, color565_table[0]);
+		tft_drawbitmap(x, y, flags, bitmap);
+	}
 	return (int)w;
 }
 
@@ -313,7 +316,7 @@ static int tft_printletter_09(int x, int y, int flags, const uint8_t bitmap[] PR
 {
 	uint16_t w = pgm_read_byte(&bitmap[4]) | (pgm_read_byte(&bitmap[5]) << 8);
 	if (draw) {
-		tft_fillrect(x, y, 13, 24, color565_table[0]);
+		//tft_fillrect(x, y, 13, 24, color565_table[0]);
 		tft_drawbitmap(x, y, flags, bitmap);
 	}
 	return (int)w;
@@ -408,32 +411,32 @@ int tft_printchar(int x, int y, int flags, char c, bool draw)
 	case 'Y': dx = tft_printletter(x, yy, flags, font_upper_Y, draw); break;
 	case 'Z': dx = tft_printletter(x, yy, flags, font_upper_Z, draw); break;
 
-	case 'a': dx = tft_printletter(x, yy+2, flags, font_lower_a, draw)-2; break;
-	case 'b': dx = tft_printletter(x, yy+2, flags, font_lower_b, draw); break;
-	case 'c': dx = tft_printletter(x, yy+2, flags, font_lower_c, draw)-1; break;
-	case 'd': dx = tft_printletter(x, yy+2, flags, font_lower_d, draw)-1; break;
-	case 'e': dx = tft_printletter(x, yy+2, flags, font_lower_e, draw)-1; break;
-	case 'f': dx = tft_printletter(x, yy+2, flags, font_lower_f, draw)-2; break;
-	case 'g': dx = tft_printletter(x, yy+2, flags, font_lower_g, draw)-2; break;
-	case 'h': dx = tft_printletter(x, yy+2, flags, font_lower_h, draw)+1; break;
-	case 'i': dx = tft_printletter(x, yy+2, flags, font_lower_i, draw)+2; break;
-	case 'j': dx = tft_printletter(x+1, yy+2, flags, font_lower_j, draw)-2; break;
-	case 'k': dx = tft_printletter(x, yy+2, flags, font_lower_k, draw); break;
-	case 'l': dx = tft_printletter(x, yy+2, flags, font_lower_l, draw)+1; break;
-	case 'm': dx = tft_printletter(x, yy+2, flags, font_lower_m, draw)+1; break;
-	case 'n': dx = tft_printletter(x, yy+2, flags, font_lower_n, draw)+1; break;
-	case 'o': dx = tft_printletter(x, yy+2, flags, font_lower_o, draw)-2; break;
-	case 'p': dx = tft_printletter(x, yy+2, flags, font_lower_p, draw); break;
-	case 'q': dx = tft_printletter(x, yy+2, flags, font_lower_q, draw)-2; break;
-	case 'r': dx = tft_printletter(x, yy+2, flags, font_lower_r, draw); break;
-	case 's': dx = tft_printletter(x, yy+2, flags, font_lower_s, draw); break;
-	case 't': dx = tft_printletter(x, yy+2, flags, font_lower_t, draw)-2; break;
-	case 'u': dx = tft_printletter(x, yy+2, flags, font_lower_u, draw)+1; break;
-	case 'v': dx = tft_printletter(x, yy+2, flags, font_lower_v, draw); break;
-	case 'w': dx = tft_printletter(x, yy+2, flags, font_lower_w, draw); break;
-	case 'x': dx = tft_printletter(x, yy+2, flags, font_lower_x, draw)-1; break;
-	case 'y': dx = tft_printletter(x, yy+2, flags, font_lower_y, draw)-1; break;
-	case 'z': dx = tft_printletter(x, yy+2, flags, font_lower_z, draw); break;
+	case 'a': dx = tft_printletter(x, yy, flags, font_lower_a, draw)-2; break;
+	case 'b': dx = tft_printletter(x, yy, flags, font_lower_b, draw); break;
+	case 'c': dx = tft_printletter(x, yy, flags, font_lower_c, draw)-1; break;
+	case 'd': dx = tft_printletter(x, yy, flags, font_lower_d, draw)-1; break;
+	case 'e': dx = tft_printletter(x, yy, flags, font_lower_e, draw)-1; break;
+	case 'f': dx = tft_printletter(x, yy, flags, font_lower_f, draw)-2; break;
+	case 'g': dx = tft_printletter(x, yy, flags, font_lower_g, draw)-2; break;
+	case 'h': dx = tft_printletter(x, yy, flags, font_lower_h, draw)+1; break;
+	case 'i': dx = tft_printletter(x, yy, flags, font_lower_i, draw)+2; break;
+	case 'j': dx = tft_printletter(x+1, yy, flags, font_lower_j, draw)-2; break;
+	case 'k': dx = tft_printletter(x, yy, flags, font_lower_k, draw); break;
+	case 'l': dx = tft_printletter(x, yy, flags, font_lower_l, draw)+1; break;
+	case 'm': dx = tft_printletter(x, yy, flags, font_lower_m, draw)+1; break;
+	case 'n': dx = tft_printletter(x, yy, flags, font_lower_n, draw)+1; break;
+	case 'o': dx = tft_printletter(x, yy, flags, font_lower_o, draw)-2; break;
+	case 'p': dx = tft_printletter(x, yy, flags, font_lower_p, draw); break;
+	case 'q': dx = tft_printletter(x, yy, flags, font_lower_q, draw)-2; break;
+	case 'r': dx = tft_printletter(x, yy, flags, font_lower_r, draw); break;
+	case 's': dx = tft_printletter(x, yy, flags, font_lower_s, draw); break;
+	case 't': dx = tft_printletter(x, yy, flags, font_lower_t, draw)-2; break;
+	case 'u': dx = tft_printletter(x, yy, flags, font_lower_u, draw)+1; break;
+	case 'v': dx = tft_printletter(x, yy, flags, font_lower_v, draw); break;
+	case 'w': dx = tft_printletter(x, yy, flags, font_lower_w, draw); break;
+	case 'x': dx = tft_printletter(x, yy, flags, font_lower_x, draw)-1; break;
+	case 'y': dx = tft_printletter(x, yy, flags, font_lower_y, draw)-1; break;
+	case 'z': dx = tft_printletter(x, yy, flags, font_lower_z, draw); break;
 
 	case '&': dx = tft_printletter(x, yy, flags, font_ampersand, draw); break;
 	case '\'': dx = tft_printletter(x, yy, flags, font_apostrophe, draw); break;
@@ -570,8 +573,8 @@ void drawVLine(int x0, int y0, int len)
 	tft_drawline(x0, y0, x0, y0 + len, WHITE);
 }
 
-void drawHLine(int x0, int y0, int len) {
-	tft_drawline(x0, y0, x0 + len, y0, WHITE);
+void drawHLine(int x0, int y0, int len, uint16_t bcolor) {
+	tft_drawline(x0, y0, x0 + len, y0, bcolor);
 }
 
 void setPrintPos(int x, int y) {

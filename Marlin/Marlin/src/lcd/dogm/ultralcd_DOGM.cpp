@@ -111,19 +111,13 @@ void MarlinUI::init_lcd() {
 
 // The kill screen is displayed for unrecoverable conditions
 void MarlinUI::draw_kill_screen() {
-  /*
-  #if ENABLED(LIGHTWEIGHT_UI)
-    ST7920_Lite_Status_Screen::clear_text_buffer();
-  #endif
-  const uint16_t h4 = u8g.getHeight() / 4;
-  firstPage();
-  do {
-    //set_font(FONT_MENU);
+
+  const uint16_t h4 = LCD_PIXEL_HEIGHT / 4;
+
     lcd_put_u8str(0, h4 * 1, status_message);
     lcd_put_u8str_P(0, h4 * 2, GET_TEXT(MSG_HALTED));
     lcd_put_u8str_P(0, h4 * 3, GET_TEXT(MSG_PLEASE_RESET));
-  } while (nextPage());
-  */
+
 }
 
 void MarlinUI::clear_lcd() { 
@@ -160,17 +154,29 @@ void MarlinUI::draw_hotend_status(const uint8_t row, const uint8_t extruder) {
 
 #endif // ADVANCED_PAUSE_FEATURE
 
+
+static uint8_t prevSelRow = -1;
+
 // Set the colors for a menu item based on whether it is selected
 static bool mark_as_selected(const uint8_t row, const bool sel) {	
-	row_y2 = row * (MENU_FONT_HEIGHT) + 10;
-	row_y1 = row_y2 + MENU_FONT_HEIGHT;
+	row_y2 = row * MENU_FONT_HEIGHT + 10;
+	row_y1 = row_y2 + MENU_FONT_HEIGHT + 1;
 	
 	if (!PAGE_CONTAINS(row_y2, row_y1)) 
 		return false;
 
 	if (sel) {
-		drawHLine(0, row_y1, LCD_PIXEL_WIDTH);
-		drawHLine(0, row_y2, LCD_PIXEL_WIDTH);
+		drawHLine(0, row_y1, LCD_PIXEL_WIDTH, WHITE);
+		drawHLine(0, row_y2, LCD_PIXEL_WIDTH, WHITE);
+		
+		if( prevSelRow != row)
+		{
+			uint8_t r_y2 = prevSelRow * MENU_FONT_HEIGHT + 10;
+			uint8_t r_y1 = r_y2 + MENU_FONT_HEIGHT + 1;
+			drawHLine(0, r_y1, LCD_PIXEL_WIDTH, BLACK);
+			drawHLine(0, r_y2, LCD_PIXEL_WIDTH, BLACK);
+			prevSelRow = row;
+		}
 	}
 	
 	lcd_moveto(0, row_y2);
