@@ -367,6 +367,10 @@ int tft_printBigNumStr(char* string) {
 	return pt_x;
 }
 
+int tft_printchar(char c)
+{
+	return tft_printchar(pt_x, pt_y, 0, c, true);
+}
 
 int tft_printchar(int x, int y, int flags, char c, bool draw)
 {
@@ -583,8 +587,8 @@ void setPrintPos(int x, int y) {
 	pt_y = y;
 }
 
-void drawBox(int x, int y, int w, int h) {
-	tft_drawrect(x, y, w, h, WHITE);
+void drawBox(int x, int y, int w, int h, uint16_t bcolor) {
+	tft_drawrect(x, y, w, h, bcolor);
 }
 
 void tft_put_int(int x) {

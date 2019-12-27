@@ -485,7 +485,7 @@ void MarlinUI::draw_status_screen() {
       strcpy(mstring, i16tostr3(planner.volumetric_percent(parser.volumetric_enabled)));
     #endif
 	*/
-/*
+
     // Progress / elapsed / estimation updates and string formatting to avoid float math on each LCD draw
     #if HAS_PRINT_PROGRESS
       const progress_t progress =
@@ -557,7 +557,6 @@ void MarlinUI::draw_status_screen() {
         #endif
       }
     #endif
-	*/
   }
   
   const bool blink = get_blink();
@@ -620,14 +619,14 @@ void MarlinUI::draw_status_screen() {
     }*/
   #endif // SDSUPPORT
 	
-	/*
+	
   #if HAS_PRINT_PROGRESS
     //
     // Progress bar frame
     //
 
     //if (PAGE_CONTAINS(49, 52))
-    drawBox(PROGRESS_BAR_X, PROGRESS_BAR_Y, PROGRESS_BAR_WIDTH, 8);
+    //drawBox(PROGRESS_BAR_X, PROGRESS_BAR_Y, PROGRESS_BAR_WIDTH, 8);
 
     //
     // Progress bar solid part
@@ -635,36 +634,45 @@ void MarlinUI::draw_status_screen() {
 
     //if (PAGE_CONTAINS(50, 51))     // 50-51 (or just 50)
     //drawBox();
-	tft_fillrect(PROGRESS_BAR_X + 1, PROGRESS_BAR_Y + 1, progress_bar_solid_width, 6, WHITE);
+	//tft_fillrect(PROGRESS_BAR_X + 1, PROGRESS_BAR_Y + 1, progress_bar_solid_width, 6, WHITE);
 
     //if (PAGE_CONTAINS(EXTRAS_BASELINE - INFO_FONT_ASCENT, EXTRAS_BASELINE - 1)) 
 	{
 
-        #if ALL(DOGM_SD_PERCENT, SHOW_REMAINING_TIME, ROTATE_PROGRESS_DISPLAY)
-        if (prev_blink != blink) {
-          prev_blink = blink;
-          if (++progress_state >= 3) progress_state = 0;
-        }
+		#if ALL(DOGM_SD_PERCENT, SHOW_REMAINING_TIME, ROTATE_PROGRESS_DISPLAY)
+		if (prev_blink != blink) {
+			prev_blink = blink;
+			if (++progress_state >= 3) progress_state = 0;
+		}
+		if (progress_string[0]) {
+			lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE - INFO_FONT_HEIGHT, progress_string);
+			lcd_put_wchar('%');
+		}
+
+		if (estimation_string[0]) {
+		   lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "R:");
+		   lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, estimation_string);
+		}
 			   		 
-        if (progress_state == 0) {
-			if (progress_string[0]) {
-			  lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, progress_string);
-            lcd_put_wchar('%');
-          }
-        }
-        else if (progress_state == 2 && estimation_string[0]) {
-          lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "R:");
-		  lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, estimation_string);
-        }
-        else if (elapsed_string[0]) {
-          lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "E:");
-          lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, elapsed_string);
-        }
+   //     if (progress_state == 0) {
+			//if (progress_string[0]) {
+			//  lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, progress_string);
+   //         lcd_put_wchar('%');
+   //       }
+   //     }
+   //     else if (progress_state == 2 && estimation_string[0]) {
+   //       lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "R:");
+		 // lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, estimation_string);
+   //     }
+   //     else if (elapsed_string[0]) {
+   //       lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "E:");
+   //       lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, elapsed_string);
+   //     }
 		#endif
     }
 
   #endif // HAS_PRINT_PROGRESS
-	*/
+	
   //
   // XYZ Coordinates
   //

@@ -62,6 +62,17 @@
 
 int page=0;
 
+void AddSpaceToLineEnd()
+{
+	int x = getPrintCol();
+	int n = (LCD_PIXEL_WIDTH - getPrintCol()) / MENU_FONT_WIDTH - 4;
+	while (n--)
+		if (lcd_put_wchar(' ') == LCD_PIXEL_WIDTH)
+			break;
+	//while (x < LCD_PIXEL_WIDTH)
+	//	x += lcd_put_wchar(' ');
+}
+
 #if HAS_LCD_CONTRAST
 
   int16_t MarlinUI::contrast = DEFAULT_LCD_CONTRAST;
@@ -113,7 +124,7 @@ void MarlinUI::init_lcd() {
 void MarlinUI::draw_kill_screen() {
 
   const uint16_t h4 = LCD_PIXEL_HEIGHT / 4;
-
+  tft_clear();
     lcd_put_u8str(0, h4 * 1, status_message);
     lcd_put_u8str_P(0, h4 * 2, GET_TEXT(MSG_HALTED));
     lcd_put_u8str_P(0, h4 * 3, GET_TEXT(MSG_PLEASE_RESET));
@@ -208,8 +219,8 @@ void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t st
 		
 		if (valstr) 
 			n -= lcd_put_u8str_max(valstr, n);
-		//while (n > MENU_FONT_WIDTH) 
-		//	n -= lcd_put_wchar(' ');
+		
+		AddSpaceToLineEnd();
 	}
 }
 
@@ -219,12 +230,12 @@ void MenuItemBase::_draw(const bool sel, const uint8_t row, PGM_P const pstr, co
 //	SERIAL_ECHO_P(pstr);
 //	SERIAL_ECHO(" ");
 //	SERIAL_ECHOLN((int)row);
-	if (mark_as_selected(row, sel)) {		
-		lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2) * (MENU_FONT_WIDTH);
-		//while (n > MENU_FONT_WIDTH)
-		//	n -= lcd_put_wchar(' ');
+	if (mark_as_selected(row, sel)) {
+		const uint8_t vallen = utf8_strlen_P(pstr);
+		lcd_put_u8str_ind_P(pstr, itemIndex, vallen);
+		AddSpaceToLineEnd();
 		lcd_put_wchar(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH*3), row_y2, post_char);
-		//lcd_put_wchar(' ');
+		lcd_put_wchar(' ');
 	}
 }
 
@@ -246,9 +257,8 @@ void MenuEditItemBase::draw(const bool sel, const uint8_t row, PGM_P const pstr,
 		uint16_t n = lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2 - vallen) * (MENU_FONT_WIDTH);
 		if (vallen) {
 			lcd_put_wchar(':');
-			//while (n > MENU_FONT_WIDTH) 
-			//	n -= lcd_put_wchar(' ');
-			lcd_moveto(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH*2)*vallen, row_y2);
+			AddSpaceToLineEnd();
+			lcd_moveto(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH)*vallen - MENU_FONT_WIDTH, row_y2);
 			if (pgm)
 				lcd_put_u8str_P(data);
 			else 
@@ -302,25 +312,31 @@ void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const valu
 		//	onpage = PAGE_CONTAINS(baseline - (EDIT_FONT_ASCENT - 1), baseline);
 		//}
 		//if (onpage) {
-		//	lcd_put_wchar(((lcd_chr_fit - 1) - (vallen + 1)) * one_chr_width, baseline, ' '); // Right-justified, padded, add a leading space
-			//lcd_put_u8str(value);
-			lcd_put_BIGNUM_u8str_max(value, PIXEL_LEN_NOLIMIT);
+			lcd_put_wchar(((lcd_chr_fit - 1) - (vallen + 1)) * one_chr_width, baseline, ' '); // Right-justified, padded, add a leading space
+			lcd_put_u8str(value);
+			//lcd_put_u8str_max(value, PIXEL_LEN_NOLIMIT);
 		//}
 	}
 }
 
 inline void draw_boxed_string(const uint16_t x, const uint16_t y, PGM_P const pstr, const bool inv) {
-//	SERIAL_ECHO("5");
+	//SERIAL_ECHO("draw5");
 	const uint16_t len = utf8_strlen_P(pstr), bw = len * (MENU_FONT_WIDTH),
-		bx = x * (MENU_FONT_WIDTH), by = (y + 1) * (MENU_FONT_HEIGHT);
-	if (inv) {
-		drawBox(bx - 1, by - (MENU_FONT_ASCENT)+1, bw + 2, MENU_FONT_HEIGHT - 1);
-	}
-	lcd_put_u8str_P(bx, by, pstr);
+		bx = x * (MENU_FONT_WIDTH), by = y * (MENU_FONT_HEIGHT);
+	if (inv)
+		drawBox(bx - 1, by - 1, bw + 5, MENU_FONT_HEIGHT - 1, WHITE);
+	else
+		drawBox(bx - 1, by - 1, bw + 5, MENU_FONT_HEIGHT - 1, BLACK);
+	lcd_put_u8str_P(bx+2, by, pstr);
+	//SERIAL_ECHO_P(pstr);
+	//SERIAL_ECHOLN("");
 }
 
 void MenuItem_confirm::draw_select_screen(PGM_P const yes, PGM_P const no, const bool yesno, PGM_P const pref, const char* const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
-//	SERIAL_ECHO("6");
+	//SERIAL_ECHO("draw6");
+	//SERIAL_ECHO_P(pref);
+	//SERIAL_ECHO(string);
+	//SERIAL_ECHO_P(suff);
 	ui.draw_select_screen_prompt(pref, string, suff);
 	draw_boxed_string(1, LCD_HEIGHT - 1, no, !yesno);
 	draw_boxed_string(LCD_WIDTH - (utf8_strlen_P(yes) + 1), LCD_HEIGHT - 1, yes, yesno);
@@ -330,7 +346,7 @@ void MenuItem_confirm::draw_select_screen(PGM_P const yes, PGM_P const no, const
 #if ENABLED(SDSUPPORT)
 
 void MenuItem_sdbase::draw(const bool sel, const uint8_t row, PGM_P const, CardReader& theCard, const bool isDir) {
-//	SERIAL_ECHO("7 ");
+	//SERIAL_ECHO("draw7 ");
 	
 	if (mark_as_selected(row, sel)) {
 		if (isDir) 
@@ -339,15 +355,7 @@ void MenuItem_sdbase::draw(const bool sel, const uint8_t row, PGM_P const, CardR
 		constexpr uint8_t maxlen = LCD_WIDTH - 1;
 		const uint16_t pixw = maxlen * (MENU_FONT_WIDTH);
 		uint16_t n = pixw - lcd_put_u8str_max(ui.scrolled_filename(theCard, maxlen, row, sel), pixw);
-		
-		n = n/MENU_FONT_WIDTH;
-//		SERIAL_ECHO(n);
-		while (n > 0)
-		{
-			if( lcd_put_wchar(' ') >= LCD_PIXEL_WIDTH)
-				break ;
-			n--;
-		}
+		AddSpaceToLineEnd();
 	}
 	
 }

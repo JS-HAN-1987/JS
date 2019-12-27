@@ -574,38 +574,41 @@ void MarlinUI::status_screen() {
   #endif
 
   #if ENABLED(ULTIPANEL_FEEDMULTIPLY)
+	if (printingIsPaused())
+	{
+		const int16_t old_frm = feedrate_percentage;
+		int16_t new_frm = old_frm + int16_t(encoderPosition);
 
-    const int16_t old_frm = feedrate_percentage;
-          int16_t new_frm = old_frm + int16_t(encoderPosition);
+		// Dead zone at 100% feedrate
+		if (old_frm == 100) {
+			if (int16_t(encoderPosition) > ENCODER_FEEDRATE_DEADZONE)
+				new_frm -= ENCODER_FEEDRATE_DEADZONE;
+			else if (int16_t(encoderPosition) < -(ENCODER_FEEDRATE_DEADZONE))
+				new_frm += ENCODER_FEEDRATE_DEADZONE;
+			else
+				new_frm = old_frm;
+		}
+		else if ((old_frm < 100 && new_frm > 100) || (old_frm > 100 && new_frm < 100))
+			new_frm = 100;
 
-    // Dead zone at 100% feedrate
-    if (old_frm == 100) {
-      if (int16_t(encoderPosition) > ENCODER_FEEDRATE_DEADZONE)
-        new_frm -= ENCODER_FEEDRATE_DEADZONE;
-      else if (int16_t(encoderPosition) < -(ENCODER_FEEDRATE_DEADZONE))
-        new_frm += ENCODER_FEEDRATE_DEADZONE;
-      else
-        new_frm = old_frm;
-    }
-    else if ((old_frm < 100 && new_frm > 100) || (old_frm > 100 && new_frm < 100))
-      new_frm = 100;
+		LIMIT(new_frm, 10, 999);
 
-    LIMIT(new_frm, 10, 999);
-
-    if (old_frm != new_frm) {
-      feedrate_percentage = new_frm;
-      encoderPosition = 0;
-      #if HAS_BUZZER && ENABLED(BEEP_ON_FEEDRATE_CHANGE)
-        static millis_t next_beep;
-        #ifndef GOT_MS
-          const millis_t ms = millis();
-        #endif
-        if (ELAPSED(ms, next_beep)) {
-          buzz(FEEDRATE_CHANGE_BEEP_DURATION, FEEDRATE_CHANGE_BEEP_FREQUENCY);
-          next_beep = ms + 500UL;
-        }
-      #endif
-    }
+		if (old_frm != new_frm) {
+			feedrate_percentage = new_frm;
+			encoderPosition = 0;
+#if HAS_BUZZER && ENABLED(BEEP_ON_FEEDRATE_CHANGE)
+			static millis_t next_beep;
+#ifndef GOT_MS
+			const millis_t ms = millis();
+#endif
+			if (ELAPSED(ms, next_beep)) {
+				buzz(FEEDRATE_CHANGE_BEEP_DURATION, FEEDRATE_CHANGE_BEEP_FREQUENCY);
+				next_beep = ms + 500UL;
+			}
+#endif
+		}
+	}
+    
 
   #endif // ULTIPANEL_FEEDMULTIPLY
 
@@ -815,7 +818,7 @@ void MarlinUI::update() {
             touch_buttons = 0;                          // Swallow the touch
           }
           buttons |= (touch_buttons & (EN_C | EN_D));   // Pass on Click and Back buttons
-		  SERIAL_ECHOLN("827_CLICK");
+		  //SERIAL_ECHOLN("827_CLICK");
 		  
           if (touch_buttons & (EN_A | EN_B)) {          // A and/or B button?
             encoderDiff = (ENCODER_STEPS_PER_MENU_ITEM) * (ENCODER_PULSES_PER_STEP) * encoderDirection;
@@ -840,8 +843,8 @@ void MarlinUI::update() {
       if (!wait_for_unclick) {                        // If not waiting for a debounce release:
         wait_for_unclick = true;                      //  - Set debounce flag to ignore continous clicks
         lcd_clicked = !wait_for_user && !no_reentry;  //  - Keep the click if not waiting for a user-click
-		if( lcd_clicked)
-		  SERIAL_ECHOLN("CLICK");
+//		if( lcd_clicked)
+//		  SERIAL_ECHOLN("CLICK");
 		wait_for_user = false;                        //  - Any click clears wait for user
         quick_feedback();                             //  - Always make a click sound
       }
@@ -1010,18 +1013,16 @@ void MarlinUI::update() {
       }
     #endif
 
-    // then we want to use 1/2 of the time only.
-    uint16_t bbr2 = planner.block_buffer_runtime() >> 1;
-	if( lcd_clicked)
+	if (lcd_clicked && printingIsActive())
 	{
-	  SERIAL_ECHOLN("CLICK!");
-	  if (printingIsActive())
-	  {
-		  SERIAL_ECHOLN("pause_print");
-		  pause_print();
-	  }
+		use_click();
+		//SERIAL_ECHOLN("pause_print");
+		pause_print();
+		return;
 	}
 
+    // then we want to use 1/2 of the time only.
+    uint16_t bbr2 = planner.block_buffer_runtime() >> 1;
     if ((should_draw() || drawing_screen) && (!bbr2 || bbr2 > max_display_update_time)) {
 
       // Change state of drawing flag between screen updates
@@ -1224,7 +1225,7 @@ void MarlinUI::update() {
             if (BUTTON_PRESSED(EN2)) newbutton |= EN_B;
           #endif
           #if BUTTON_EXISTS(ENC)
-            if (BUTTON_PRESSED(ENC)) {newbutton |= EN_C; SERIAL_ECHOLN("1226_CLICK");}
+            if (BUTTON_PRESSED(ENC)) newbutton |= EN_C;  //SERIAL_ECHOLN("1226_CLICK");}
           #endif
           #if BUTTON_EXISTS(BACK)
             if (BUTTON_PRESSED(BACK)) newbutton |= EN_D;
@@ -1547,9 +1548,9 @@ void MarlinUI::update() {
   #endif
 
   void MarlinUI::pause_print() {
-    #if HAS_LCD_MENU
-      synchronize(GET_TEXT(MSG_PAUSE_PRINT));
-    #endif
+    //#if HAS_LCD_MENU
+    //  synchronize(GET_TEXT(MSG_PAUSE_PRINT));
+    //#endif
 
     #if ENABLED(POWER_LOSS_RECOVERY)
       if (recovery.enabled) recovery.save(true, false);

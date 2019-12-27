@@ -56,10 +56,10 @@ int lcd_put_wchar_max(wchar_t c, pixel_len_t max_length) {
   }
 
   if (c < 256) {
-    return tft_printstr((char*)&c);
+    return tft_printchar(x, y, 0, c, true);
   }
   
-  uint16_t ret = tft_printf(x, y, 0, c);
+  uint16_t ret = tft_printchar(x, y, 0, c, true);
   setPrintPos(x + ret, y);
   return ret;
 }

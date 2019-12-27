@@ -156,6 +156,7 @@ void menu_main() {
 				);
 			});
 		  #endif
+		  SUBMENU(MSG_TUNE, menu_tune);
 	  }
     #endif
     SUBMENU(MSG_MOTION, menu_motion);
