@@ -186,12 +186,12 @@ static bool mark_as_selected(const uint8_t row, const bool sel) {
 // Draw a static line of text in the same idiom as a menu item
 void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t style/*=SS_DEFAULT*/, const char* const valstr/*=nullptr*/) {
 
-	SERIAL_ECHO("draw1");
-	SERIAL_ECHO_P(pstr);
-	SERIAL_ECHO(" ");
-	SERIAL_ECHO((int)row);
-	SERIAL_ECHO(" ");
-	SERIAL_ECHOLN(valstr);
+//	SERIAL_ECHO("draw1");
+//	SERIAL_ECHO_P(pstr);
+//	SERIAL_ECHO(" ");
+//	SERIAL_ECHO((int)row);
+//	SERIAL_ECHO(" ");
+//	SERIAL_ECHOLN(valstr);
 
 	if (mark_as_selected(row, style & SS_INVERT)) {
 		uint16_t n = LCD_PIXEL_WIDTH; // pixel width of string allowed
@@ -215,10 +215,10 @@ void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t st
 
 // Draw a generic menu item
 void MenuItemBase::_draw(const bool sel, const uint8_t row, PGM_P const pstr, const char, const char post_char) {
-	SERIAL_ECHO("draw2");
-	SERIAL_ECHO_P(pstr);
-	SERIAL_ECHO(" ");
-	SERIAL_ECHOLN((int)row);
+//	SERIAL_ECHO("draw2");
+//	SERIAL_ECHO_P(pstr);
+//	SERIAL_ECHO(" ");
+//	SERIAL_ECHOLN((int)row);
 	if (mark_as_selected(row, sel)) {		
 		lcd_put_u8str_ind_P(pstr, itemIndex, LCD_WIDTH - 2) * (MENU_FONT_WIDTH);
 		//while (n > MENU_FONT_WIDTH)
@@ -230,16 +230,16 @@ void MenuItemBase::_draw(const bool sel, const uint8_t row, PGM_P const pstr, co
 
 // Draw a menu item with an editable value
 void MenuEditItemBase::draw(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
-	SERIAL_ECHO("draw3 ");
-	SERIAL_ECHO_P(pstr);
-	SERIAL_ECHO(" ");
-	SERIAL_ECHO(pgm ? 1 : 0);
-	if (pgm)
-		SERIAL_ECHO_P(data);
-	else
-		SERIAL_ECHO(data);
-	SERIAL_ECHO(" ");
-	SERIAL_ECHOLN((int)row);
+//	SERIAL_ECHO("draw3 ");
+//	SERIAL_ECHO_P(pstr);
+//	SERIAL_ECHO(" ");
+//	SERIAL_ECHO(pgm ? 1 : 0);
+//	if (pgm)
+//		SERIAL_ECHO_P(data);
+//	else
+//		SERIAL_ECHO(data);
+//	SERIAL_ECHO(" ");
+//	SERIAL_ECHOLN((int)row);
 
 	if (mark_as_selected(row, sel)) {
 		const uint8_t vallen = (pgm ? utf8_strlen_P(data) : utf8_strlen((char*)data));
@@ -258,7 +258,7 @@ void MenuEditItemBase::draw(const bool sel, const uint8_t row, PGM_P const pstr,
 }
 
 void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
-	SERIAL_ECHO("draw4");
+//	SERIAL_ECHO("draw4");
 	
 	ui.encoder_direction_normal();
 
@@ -310,7 +310,7 @@ void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const valu
 }
 
 inline void draw_boxed_string(const uint16_t x, const uint16_t y, PGM_P const pstr, const bool inv) {
-	SERIAL_ECHO("5");
+//	SERIAL_ECHO("5");
 	const uint16_t len = utf8_strlen_P(pstr), bw = len * (MENU_FONT_WIDTH),
 		bx = x * (MENU_FONT_WIDTH), by = (y + 1) * (MENU_FONT_HEIGHT);
 	if (inv) {
@@ -320,7 +320,7 @@ inline void draw_boxed_string(const uint16_t x, const uint16_t y, PGM_P const ps
 }
 
 void MenuItem_confirm::draw_select_screen(PGM_P const yes, PGM_P const no, const bool yesno, PGM_P const pref, const char* const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
-	SERIAL_ECHO("6");
+//	SERIAL_ECHO("6");
 	ui.draw_select_screen_prompt(pref, string, suff);
 	draw_boxed_string(1, LCD_HEIGHT - 1, no, !yesno);
 	draw_boxed_string(LCD_WIDTH - (utf8_strlen_P(yes) + 1), LCD_HEIGHT - 1, yes, yesno);
@@ -330,7 +330,7 @@ void MenuItem_confirm::draw_select_screen(PGM_P const yes, PGM_P const no, const
 #if ENABLED(SDSUPPORT)
 
 void MenuItem_sdbase::draw(const bool sel, const uint8_t row, PGM_P const, CardReader& theCard, const bool isDir) {
-	SERIAL_ECHO("7 ");
+//	SERIAL_ECHO("7 ");
 	
 	if (mark_as_selected(row, sel)) {
 		if (isDir) 
@@ -341,7 +341,7 @@ void MenuItem_sdbase::draw(const bool sel, const uint8_t row, PGM_P const, CardR
 		uint16_t n = pixw - lcd_put_u8str_max(ui.scrolled_filename(theCard, maxlen, row, sel), pixw);
 		
 		n = n/MENU_FONT_WIDTH;
-		SERIAL_ECHO(n);
+//		SERIAL_ECHO(n);
 		while (n > 0)
 		{
 			if( lcd_put_wchar(' ') >= LCD_PIXEL_WIDTH)
@@ -365,78 +365,77 @@ void MenuItem_sdbase::draw(const bool sel, const uint8_t row, PGM_P const, CardR
 #define MAP_MAX_PIXELS_Y        49
 
 void MarlinUI::ubl_plot(const uint8_t x_plot, const uint8_t y_plot) {
-	//// Scale the box pixels appropriately
-	//uint16_t x_map_pixels = ((MAP_MAX_PIXELS_X - 4) / (GRID_MAX_POINTS_X)) * (GRID_MAX_POINTS_X),
-	//	y_map_pixels = ((MAP_MAX_PIXELS_Y - 4) / (GRID_MAX_POINTS_Y)) * (GRID_MAX_POINTS_Y),
+	// Scale the box pixels appropriately
+	uint16_t x_map_pixels = ((MAP_MAX_PIXELS_X - 4) / (GRID_MAX_POINTS_X)) * (GRID_MAX_POINTS_X),
+		y_map_pixels = ((MAP_MAX_PIXELS_Y - 4) / (GRID_MAX_POINTS_Y)) * (GRID_MAX_POINTS_Y),
 
-	//	pixels_per_x_mesh_pnt = x_map_pixels / (GRID_MAX_POINTS_X),
-	//	pixels_per_y_mesh_pnt = y_map_pixels / (GRID_MAX_POINTS_Y),
+		pixels_per_x_mesh_pnt = x_map_pixels / (GRID_MAX_POINTS_X),
+		pixels_per_y_mesh_pnt = y_map_pixels / (GRID_MAX_POINTS_Y),
 
-	//	x_offset = MAP_UPPER_LEFT_CORNER_X + 1 + (MAP_MAX_PIXELS_X - x_map_pixels - 2) / 2,
-	//	y_offset = MAP_UPPER_LEFT_CORNER_Y + 1 + (MAP_MAX_PIXELS_Y - y_map_pixels - 2) / 2;
+		x_offset = MAP_UPPER_LEFT_CORNER_X + 1 + (MAP_MAX_PIXELS_X - x_map_pixels - 2) / 2,
+		y_offset = MAP_UPPER_LEFT_CORNER_Y + 1 + (MAP_MAX_PIXELS_Y - y_map_pixels - 2) / 2;
 
-	//// Clear the Mesh Map
+	// Clear the Mesh Map
 
-	//if (PAGE_CONTAINS(y_offset - 2, y_offset + y_map_pixels + 4)) {
-	//	//u8g.setColorIndex(1);  // First draw the bigger box in White so we have a border around the mesh map box
-	//	u8g.drawBox(x_offset - 2, y_offset - 2, x_map_pixels + 4, y_map_pixels + 4);
-	//	if (PAGE_CONTAINS(y_offset, y_offset + y_map_pixels)) {
-	//		//u8g.setColorIndex(0);  // Now actually clear the mesh map box
-	//		u8g.drawBox(x_offset, y_offset, x_map_pixels, y_map_pixels);
-	//	}
-	//}
+	if (PAGE_CONTAINS(y_offset - 2, y_offset + y_map_pixels + 4)) {
+		//u8g.setColorIndex(1);  // First draw the bigger box in White so we have a border around the mesh map box
+		drawBox(x_offset - 2, y_offset - 2, x_map_pixels + 4, y_map_pixels + 4);
+		if (PAGE_CONTAINS(y_offset, y_offset + y_map_pixels)) {
+			//u8g.setColorIndex(0);  // Now actually clear the mesh map box
+			drawBox(x_offset, y_offset, x_map_pixels, y_map_pixels);
+		}
+	}
 
-	//// Display Mesh Point Locations
+	// Display Mesh Point Locations
 
-	////u8g.setColorIndex(1);
-	//const uint16_t sx = x_offset + pixels_per_x_mesh_pnt / 2;
-	//uint16_t  y = y_offset + pixels_per_y_mesh_pnt / 2;
-	//for (uint8_t j = 0; j < GRID_MAX_POINTS_Y; j++, y += pixels_per_y_mesh_pnt)
-	//	if (PAGE_CONTAINS(y, y))
-	//		for (uint8_t i = 0, x = sx; i < GRID_MAX_POINTS_X; i++, x += pixels_per_x_mesh_pnt)
-	//			u8g.drawBox(x, y, 1, 1);
+	//u8g.setColorIndex(1);
+	const uint16_t sx = x_offset + pixels_per_x_mesh_pnt / 2;
+	uint16_t  y = y_offset + pixels_per_y_mesh_pnt / 2;
+	for (uint8_t j = 0; j < GRID_MAX_POINTS_Y; j++, y += pixels_per_y_mesh_pnt)
+		if (PAGE_CONTAINS(y, y))
+			for (uint8_t i = 0, x = sx; i < GRID_MAX_POINTS_X; i++, x += pixels_per_x_mesh_pnt)
+				drawBox(x, y, 1, 1);
 
-	//// Fill in the Specified Mesh Point
+	// Fill in the Specified Mesh Point
 
-	//const uint8_t y_plot_inv = (GRID_MAX_POINTS_Y - 1) - y_plot;  // The origin is typically in the lower right corner.  We need to
-	//															  // invert the Y to get it to plot in the right location.
+	const uint8_t y_plot_inv = (GRID_MAX_POINTS_Y - 1) - y_plot;  // The origin is typically in the lower right corner.  We need to
+																  // invert the Y to get it to plot in the right location.
 
-	//const uint16_t by = y_offset + y_plot_inv * pixels_per_y_mesh_pnt;
-	//if (PAGE_CONTAINS(by, by + pixels_per_y_mesh_pnt))
-	//	u8g.drawBox(
-	//		x_offset + x_plot * pixels_per_x_mesh_pnt, by,
-	//		pixels_per_x_mesh_pnt, pixels_per_y_mesh_pnt
-	//	);
+	const uint16_t by = y_offset + y_plot_inv * pixels_per_y_mesh_pnt;
+	if (PAGE_CONTAINS(by, by + pixels_per_y_mesh_pnt))
+		drawBox(
+			x_offset + x_plot * pixels_per_x_mesh_pnt, by,
+			pixels_per_x_mesh_pnt, pixels_per_y_mesh_pnt
+		);
 
-	//// Put Relevant Text on Display
+	// Put Relevant Text on Display
 
-	//// Show X and Y positions at top of screen
-	////u8g.setColorIndex(1);
-	//if (PAGE_UNDER(7)) {
-	//	const xy_pos_t pos = { ubl.mesh_index_to_xpos(x_plot), ubl.mesh_index_to_ypos(y_plot) },
-	//		lpos = pos.asLogical();
-	//	lcd_put_u8str(5, 7, "X:");
-	//	lcd_put_u8str(ftostr52(lpos.x));
-	//	lcd_put_u8str(74, 7, "Y:");
-	//	lcd_put_u8str(ftostr52(lpos.y));
-	//}
+	// Show X and Y positions at top of screen
+	//u8g.setColorIndex(1);
+	if (PAGE_UNDER(7)) {
+		const xy_pos_t pos = { ubl.mesh_index_to_xpos(x_plot), ubl.mesh_index_to_ypos(y_plot) },
+			lpos = pos.asLogical();
+		lcd_put_u8str(5, 7, "X:");
+		lcd_put_u8str(ftostr52(lpos.x));
+		lcd_put_u8str(74, 7, "Y:");
+		lcd_put_u8str(ftostr52(lpos.y));
+	}
 
-	//// Print plot position
-	//if (PAGE_CONTAINS(LCD_PIXEL_HEIGHT - (INFO_FONT_HEIGHT - 1), LCD_PIXEL_HEIGHT)) {
-	//	lcd_put_wchar(5, LCD_PIXEL_HEIGHT, '(');
-	//	u8g.print(x_plot);
-	//	lcd_put_wchar(',');
-	//	u8g.print(y_plot);
-	//	lcd_put_wchar(')');
+	// Print plot position
+	if (PAGE_CONTAINS(LCD_PIXEL_HEIGHT - (INFO_FONT_HEIGHT - 1), LCD_PIXEL_HEIGHT)) {
+		lcd_put_wchar(5, LCD_PIXEL_HEIGHT, '(');
+		tft_put_int(x_plot);
+		lcd_put_wchar(',');
+		tft_put_int(y_plot);
+		lcd_put_wchar(')');
 
-	//	// Show the location value
-	//	lcd_put_u8str(74, LCD_PIXEL_HEIGHT, "Z:");
-	//	if (!isnan(ubl.z_values[x_plot][y_plot]))
-	//		lcd_put_u8str(ftostr43sign(ubl.z_values[x_plot][y_plot]));
-	//	else
-	//		lcd_put_u8str_P(PSTR(" -----"));
-	//}
-
+		// Show the location value
+		lcd_put_u8str(74, LCD_PIXEL_HEIGHT, "Z:");
+		if (!isnan(ubl.z_values[x_plot][y_plot]))
+			lcd_put_u8str(ftostr43sign(ubl.z_values[x_plot][y_plot]));
+		else
+			lcd_put_u8str_P(PSTR(" -----"));
+	}
 }
 
 #endif // AUTO_BED_LEVELING_UBL

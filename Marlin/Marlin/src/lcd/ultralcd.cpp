@@ -559,11 +559,11 @@ void MarlinUI::status_screen() {
 
   #if HAS_LCD_MENU
 
-    if (use_click()) {
+    if (use_click()) {			  
       #if BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
         next_filament_display = millis() + 5000UL;  // Show status message for 5s
       #endif
-	  SERIAL_ECHO("goto_screen(menu_main)");
+	  //SERIAL_ECHO("goto_screen(menu_main)");
       goto_screen(menu_main);
       #if DISABLED(NO_LCD_REINIT)
         init_lcd(); // May revive the LCD if static electricity killed it
@@ -815,6 +815,8 @@ void MarlinUI::update() {
             touch_buttons = 0;                          // Swallow the touch
           }
           buttons |= (touch_buttons & (EN_C | EN_D));   // Pass on Click and Back buttons
+		  SERIAL_ECHOLN("827_CLICK");
+		  
           if (touch_buttons & (EN_A | EN_B)) {          // A and/or B button?
             encoderDiff = (ENCODER_STEPS_PER_MENU_ITEM) * (ENCODER_PULSES_PER_STEP) * encoderDirection;
             if (touch_buttons & EN_A) encoderDiff *= -1;
@@ -838,7 +840,9 @@ void MarlinUI::update() {
       if (!wait_for_unclick) {                        // If not waiting for a debounce release:
         wait_for_unclick = true;                      //  - Set debounce flag to ignore continous clicks
         lcd_clicked = !wait_for_user && !no_reentry;  //  - Keep the click if not waiting for a user-click
-        wait_for_user = false;                        //  - Any click clears wait for user
+		if( lcd_clicked)
+		  SERIAL_ECHOLN("CLICK");
+		wait_for_user = false;                        //  - Any click clears wait for user
         quick_feedback();                             //  - Always make a click sound
       }
     }
@@ -1008,6 +1012,15 @@ void MarlinUI::update() {
 
     // then we want to use 1/2 of the time only.
     uint16_t bbr2 = planner.block_buffer_runtime() >> 1;
+	if( lcd_clicked)
+	{
+	  SERIAL_ECHOLN("CLICK!");
+	  if (printingIsActive())
+	  {
+		  SERIAL_ECHOLN("pause_print");
+		  pause_print();
+	  }
+	}
 
     if ((should_draw() || drawing_screen) && (!bbr2 || bbr2 > max_display_update_time)) {
 
@@ -1034,7 +1047,8 @@ void MarlinUI::update() {
           const bool in_status = on_status_screen(),
                      do_u8g_loop = !in_status;
           lcd_in_status(in_status);
-          if (in_status) status_screen();
+          if (in_status) 
+			  status_screen();
         #else
           constexpr bool do_u8g_loop = true;
         #endif
@@ -1210,7 +1224,7 @@ void MarlinUI::update() {
             if (BUTTON_PRESSED(EN2)) newbutton |= EN_B;
           #endif
           #if BUTTON_EXISTS(ENC)
-            if (BUTTON_PRESSED(ENC)) newbutton |= EN_C;
+            if (BUTTON_PRESSED(ENC)) {newbutton |= EN_C; SERIAL_ECHOLN("1226_CLICK");}
           #endif
           #if BUTTON_EXISTS(BACK)
             if (BUTTON_PRESSED(BACK)) newbutton |= EN_D;
@@ -1560,6 +1574,7 @@ void MarlinUI::update() {
   }
 
   void MarlinUI::resume_print() {
+	go_back();
     reset_status();
     #if ENABLED(PARK_HEAD_ON_PAUSE)
       wait_for_heatup = wait_for_user = false;

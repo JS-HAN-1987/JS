@@ -370,11 +370,11 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
   else
     encoderTopLine = encoderLine;
   
-  if (prev_encoderTopLine != encoderTopLine)
-  {
-	ui.clear_lcd();
-	prev_encoderTopLine = encoderTopLine;
-  }
+//  if (prev_encoderTopLine != encoderTopLine)
+//  {
+//	ui.clear_lcd();
+//	prev_encoderTopLine = encoderTopLine;
+//  }
 }
 
 #if HAS_BUZZER

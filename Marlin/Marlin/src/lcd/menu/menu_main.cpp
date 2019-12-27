@@ -80,7 +80,7 @@ void menu_configuration();
 extern const char M21_STR[];
 
 void menu_main() {
-  SERIAL_ECHOLN("menu_main");
+  //SERIAL_ECHOLN("menu_main");
   START_MENU();
   BACK_ITEM(MSG_WATCH);
 
@@ -144,9 +144,20 @@ void menu_main() {
     #endif // !HAS_ENCODER_WHEEL && SDSUPPORT
 
     #if MACHINE_CAN_PAUSE
-      if (printingIsPaused()) ACTION_ITEM(MSG_RESUME_PRINT, ui.resume_print);
+      if (printingIsPaused())
+	  {
+		  ACTION_ITEM(MSG_RESUME_PRINT, ui.resume_print);
+		  #if MACHINE_CAN_STOP
+		  SUBMENU(MSG_STOP_PRINT, []{
+			MenuItem_confirm::select_screen(
+			  GET_TEXT(MSG_BUTTON_STOP), GET_TEXT(MSG_BACK),
+			  ui.abort_print, ui.goto_previous_screen,
+			  GET_TEXT(MSG_STOP_PRINT), (PGM_P)nullptr, PSTR("?")
+				);
+			});
+		  #endif
+	  }
     #endif
-
     SUBMENU(MSG_MOTION, menu_motion);
   }
 
@@ -286,7 +297,7 @@ void menu_main() {
   #endif
   END_MENU();
 
-  SERIAL_ECHOLN("menu_main END");
+  //SERIAL_ECHOLN("menu_main END");
 }
 
 #endif // HAS_LCD_MENU

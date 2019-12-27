@@ -64,7 +64,7 @@
 #define X_LABEL_POS      3
 #define X_VALUE_POS     15
 #define XYZ_SPACING     INFO_FONT_WIDTH*8
-#define XYZ_BASELINE    STATUS_HEATERS_Y + STATUS_HEATERS_HEIGHT*2 + INFO_FONT_HEIGHT + 3 //(30 + INFO_FONT_ASCENT)
+#define XYZ_BASELINE    STATUS_HEATERS_Y + STATUS_HEATERS_HEIGHT*2 + INFO_FONT_HEIGHT //(30 + INFO_FONT_ASCENT)
 #define EXTRAS_BASELINE XYZ_BASELINE + INFO_FONT_HEIGHT	// xyz position
 #define EXTRAS_2_BASELINE (EXTRAS_BASELINE )			// feed rate
 #define STATUS_BASELINE (LCD_PIXEL_HEIGHT - INFO_FONT_HEIGHT - INFO_FONT_DESCENT)
@@ -119,7 +119,7 @@
 #endif
 
 #define PROGRESS_BAR_X (INFO_FONT_WIDTH * 10)
-#define PROGRESS_BAR_Y (EXTRAS_2_BASELINE + INFO_FONT_HEIGHT)
+#define PROGRESS_BAR_Y (EXTRAS_2_BASELINE + INFO_FONT_HEIGHT + 5)
 #define PROGRESS_BAR_WIDTH (LCD_PIXEL_WIDTH - PROGRESS_BAR_X)
 
 FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, const uint8_t ty) {
@@ -193,12 +193,12 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
       //uint8_t tall = uint8_t(perc * BAR_TALL + 0.5f);
       //NOMORE(tall, BAR_TALL);
 
-      #if ANIM_HOTEND
-        // Draw hotend bitmap, either whole or split by the heating percent
-        const uint8_t hx = STATUS_HOTEND_X(heater),
-                      bw = STATUS_HOTEND_BYTEWIDTH(heater);
-            tft_drawbitmap2(hx, STATUS_HEATERS_Y, bw, STATUS_HEATERS_HEIGHT, HOTEND_BITMAP(heater, isHeat));
-      #endif
+//      #if ANIM_HOTEND
+//        // Draw hotend bitmap, either whole or split by the heating percent
+//        const uint8_t hx = STATUS_HOTEND_X(heater),
+//                      bw = STATUS_HOTEND_BYTEWIDTH(heater);
+//            tft_drawbitmap2(hx, STATUS_HEATERS_Y, bw, STATUS_HEATERS_HEIGHT, HOTEND_BITMAP(heater, isHeat));
+//      #endif
 /*
       // Draw a heating progress bar, if specified
       #if DO_DRAW_BED && ENABLED(STATUS_HEAT_PERCENT)
@@ -243,7 +243,7 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
 #if DO_DRAW_FAN
   // Draw bed bitmap with current and target temperatures
   FORCE_INLINE void _draw_fan_status(const bool blink) {
-  
+  /*
 #if STATUS_FAN_FRAMES > 2
   static bool old_blink;
   static uint8_t fan_frame = 0;
@@ -281,6 +281,7 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
 		  lcd_put_wchar(c);
 	  }
   }
+  */
   }
 #endif
 
@@ -378,7 +379,7 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
 // Homed and known, display constantly.
 //
 FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const bool blink) {
-	
+	/*
 	const AxisEnum a = (
     #if ENABLED(LCD_SHOW_E_TOTAL)
       axis == E_AXIS ? X_AXIS :
@@ -402,7 +403,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
           lcd_put_u8str(value);
     }
   }
-  
+  */
 }
 
 void MarlinUI::draw_status_screen() {
@@ -464,7 +465,7 @@ void MarlinUI::draw_status_screen() {
       #endif
       heat_bits = new_bits;
     #endif
-
+/*
     const xyz_pos_t lpos = current_position.asLogical();
     strcpy(zstring, ftostr52sp(lpos.z));
 
@@ -483,7 +484,8 @@ void MarlinUI::draw_status_screen() {
       strcpy(wstring, ftostr12ns(filwidth.measured_mm));
       strcpy(mstring, i16tostr3(planner.volumetric_percent(parser.volumetric_enabled)));
     #endif
-
+	*/
+/*
     // Progress / elapsed / estimation updates and string formatting to avoid float math on each LCD draw
     #if HAS_PRINT_PROGRESS
       const progress_t progress =
@@ -555,6 +557,7 @@ void MarlinUI::draw_status_screen() {
         #endif
       }
     #endif
+	*/
   }
   
   const bool blink = get_blink();
@@ -603,6 +606,7 @@ void MarlinUI::draw_status_screen() {
     //
     // SD Card Symbol
     //
+	/*
     if (card.isFileOpen()) 
 	{ //EXTRAS_2_BASELINE
       // Upper box
@@ -613,10 +617,10 @@ void MarlinUI::draw_status_screen() {
       //drawBox(x+16, y+4, 4, 10);     // 50, 44
       // Bottom hollow box
       //drawBox(x, y+14, 20, 8);  // 42, 49
-    }
+    }*/
   #endif // SDSUPPORT
 	
-	
+	/*
   #if HAS_PRINT_PROGRESS
     //
     // Progress bar frame
@@ -660,7 +664,7 @@ void MarlinUI::draw_status_screen() {
     }
 
   #endif // HAS_PRINT_PROGRESS
-	
+	*/
   //
   // XYZ Coordinates
   //
@@ -672,7 +676,7 @@ void MarlinUI::draw_status_screen() {
     #define XYZ_FRAME_TOP XYZ_BASELINE
     #define XYZ_FRAME_HEIGHT INFO_FONT_HEIGHT + 3
   #endif
-
+/*
   if (PAGE_CONTAINS(XYZ_FRAME_TOP, XYZ_FRAME_TOP + XYZ_FRAME_HEIGHT - 1)) {
 
     #if ENABLED(XYZ_HOLLOW_FRAME)
@@ -727,7 +731,7 @@ void MarlinUI::draw_status_screen() {
       #endif
     }
   }
-  
+  */
   
   // Feedrate
   if (PAGE_CONTAINS(EXTRAS_2_BASELINE - INFO_FONT_ASCENT, EXTRAS_2_BASELINE - 1)) {
