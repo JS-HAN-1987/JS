@@ -168,16 +168,16 @@
         #define SHIFT_CLK 44 // shift register
         #define SHIFT_LD 42 // shift register
       #else
-        #define BTN_EN1 37
-        #define BTN_EN2 35
-        #define BTN_ENC 31  // the click
+        //#define BTN_EN1 37
+        //#define BTN_EN2 35
+        //#define BTN_ENC 31  // the click
       #endif
 
-      #ifdef G3D_PANEL
-        #define SDCARDDETECT 49
-      #else
-        #define SDCARDDETECT -1  // Ramps does not use this port
-      #endif
+      //#ifdef G3D_PANEL
+      //  #define SDCARDDETECT 49
+      //#else
+      //  #define SDCARDDETECT -1  // Ramps does not use this port
+      //#endif
 
     #endif
 

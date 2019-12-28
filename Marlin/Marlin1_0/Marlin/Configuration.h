@@ -660,13 +660,13 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //#define RA_CONTROL_PANEL
 
 //automatic expansion
-#if defined (MAKRPANEL)
+//#if defined (MAKRPANEL)
  #define DOGLCD
  #define SDSUPPORT
  #define ULTIPANEL
  #define NEWPANEL
- #define DEFAULT_LCD_CONTRAST 17
-#endif
+// #define DEFAULT_LCD_CONTRAST 17
+//#endif
 
 #if defined(miniVIKI) || defined(VIKI2)
  #define ULTRA_LCD  //general LCD support, also 16x2

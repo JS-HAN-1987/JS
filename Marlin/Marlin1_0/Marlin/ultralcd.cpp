@@ -7,6 +7,7 @@
 #include "temperature.h"
 #include "stepper.h"
 #include "ConfigurationStore.h"
+#include "oc_tft.h"
 
 int8_t encoderDiff; /* encoderDiff is updated from interrupt context and added to encoderPosition every LCD update */
 
@@ -119,7 +120,7 @@ static void menu_action_setting_edit_callback_long5(const char* pstr, unsigned l
 
 /* Helper macros for menus */
 #define START_MENU() do { \
-    if (encoderPosition > 0x8000) encoderPosition = 0; \
+    if (encoderPosition > 0x8000) encoderPosition = 0; \    
     if (encoderPosition / ENCODER_STEPS_PER_MENU_ITEM < currentMenuViewOffset) currentMenuViewOffset = encoderPosition / ENCODER_STEPS_PER_MENU_ITEM;\
     uint8_t _lineNr = currentMenuViewOffset, _menuItemNr; \
     bool wasClicked = LCD_CLICKED;\
@@ -898,20 +899,20 @@ static void lcd_control_volumetric_menu()
 #ifdef DOGLCD
 static void lcd_set_contrast()
 {
-    if (encoderPosition != 0)
-    {
-        lcd_contrast -= encoderPosition;
-        if (lcd_contrast < 0) lcd_contrast = 0;
-        else if (lcd_contrast > 63) lcd_contrast = 63;
-        encoderPosition = 0;
-        lcdDrawUpdate = 1;
-        u8g.setContrast(lcd_contrast);
-    }
-    if (lcdDrawUpdate)
-    {
-        lcd_implementation_drawedit(PSTR(MSG_CONTRAST), itostr2(lcd_contrast));
-    }
-    if (LCD_CLICKED) lcd_goto_menu(lcd_control_menu);
+    //if (encoderPosition != 0)
+    //{
+    //    lcd_contrast -= encoderPosition;
+    //    if (lcd_contrast < 0) lcd_contrast = 0;
+    //    else if (lcd_contrast > 63) lcd_contrast = 63;
+    //    encoderPosition = 0;
+    //    lcdDrawUpdate = 1;
+    //    u8g.setContrast(lcd_contrast);
+    //}
+    //if (lcdDrawUpdate)
+    //{
+    //    lcd_implementation_drawedit(PSTR(MSG_CONTRAST), itostr2(lcd_contrast));
+    //}
+    //if (LCD_CLICKED) lcd_goto_menu(lcd_control_menu);
 }
 #endif
 
@@ -1248,17 +1249,17 @@ void lcd_update()
 
 #ifdef DOGLCD        // Changes due to different driver architecture of the DOGM display
         blink++;     // Variable for fan animation and alive dot
-        u8g.firstPage();
+        //firstPage();
         do
         {
-            u8g.setFont(u8g_font_6x10_marlin);
-            u8g.setPrintPos(125,0);
-            if (blink % 2) u8g.setColorIndex(1); else u8g.setColorIndex(0); // Set color for the alive dot
-            u8g.drawPixel(127,63); // draw alive dot
-            u8g.setColorIndex(1); // black on white
+            //u8g.setFont(u8g_font_6x10_marlin);
+            setPrintPos(125,0);
+            //if (blink % 2) //u8g.setColorIndex(1); else //u8g.setColorIndex(0); // Set color for the alive dot
+            ////u8g.drawPixel(127,63); // draw alive dot
+            ////u8g.setColorIndex(1); // black on white
             (*currentMenu)();
             if (!lcdDrawUpdate)  break; // Terminate display update, when nothing new to draw. This must be done before the last dogm.next()
-        } while( u8g.nextPage() );
+        } while( 0 );
 #else
         (*currentMenu)();
 #endif
@@ -1337,7 +1338,7 @@ void lcd_reset_alert_level()
 void lcd_setcontrast(uint8_t value)
 {
     lcd_contrast = value & 63;
-    u8g.setContrast(lcd_contrast);
+    //u8g.setContrast(lcd_contrast);
 }
 #endif
 

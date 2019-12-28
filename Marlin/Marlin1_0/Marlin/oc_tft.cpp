@@ -612,3 +612,7 @@ int getPrintCol()
 {
 	return pt_x;
 }
+int tft_getHeight()
+{
+	return 240;
+}

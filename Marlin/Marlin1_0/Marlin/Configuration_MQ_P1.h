@@ -28,9 +28,9 @@
 #define IGNORE_MINTEMP
 #define OC_TFT
 
-#define OC_EN1 31
-#define OC_EN2 33
-#define OC_ENC 35
+#define BTN_EN1 31
+#define BTN_EN2 33
+#define BTN_ENC 35
 
 #define xOC_NPDM
 	#ifdef OC_NPDM

@@ -75,6 +75,7 @@ int tft_printstr(char* string);
 int  getPrintRow();
 int getPrintCol();
 int tft_printBigNumStr(char* string);
+int tft_getHeight();
 
 
 
