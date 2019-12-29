@@ -133,71 +133,10 @@
     #define LCD_PINS_D5 25
     #define LCD_PINS_D6 27
     #define LCD_PINS_D7 29
-
-    #ifdef REPRAP_DISCOUNT_SMART_CONTROLLER
-      #define BEEPER 37
-
-      #define BTN_EN1 31
-      #define BTN_EN2 33
-      #define BTN_ENC 35
-
-      #define SDCARDDETECT 49
-    #elif defined(LCD_I2C_PANELOLU2)
-      #define BTN_EN1 47  // reverse if the encoder turns the wrong way.
-      #define BTN_EN2 43
-      #define BTN_ENC 32
-      #define LCD_SDSS 53
-      #define SDCARDDETECT -1
-      #define KILL_PIN 41
-    #elif defined(LCD_I2C_VIKI)
-      #define BTN_EN1 22  // reverse if the encoder turns the wrong way.
-      #define BTN_EN2 7
-      #define BTN_ENC -1
-      #define LCD_SDSS 53
-      #define SDCARDDETECT 49
-    #else
-      // arduino pin which triggers an piezzo beeper
-      #define BEEPER 33  // Beeper on AUX-4
-
-      // buttons are directly attached using AUX-2
-      #ifdef REPRAPWORLD_KEYPAD
-        #define BTN_EN1 64 // encoder
-        #define BTN_EN2 59 // encoder
-        #define BTN_ENC 63 // enter button
-        #define SHIFT_OUT 40 // shift register
-        #define SHIFT_CLK 44 // shift register
-        #define SHIFT_LD 42 // shift register
-      #else
-        //#define BTN_EN1 37
-        //#define BTN_EN2 35
-        //#define BTN_ENC 31  // the click
-      #endif
-
-      //#ifdef G3D_PANEL
-      //  #define SDCARDDETECT 49
-      //#else
-      //  #define SDCARDDETECT -1  // Ramps does not use this port
-      //#endif
-
-    #endif
-
-  #else // Old-style panel with shift register
-    // Arduino pin witch triggers an piezzo beeper
-    #define BEEPER 33   // No Beeper added
-
-    // Buttons are attached to a shift register
-    // Not wired yet
-    // #define SHIFT_CLK 38
-    // #define SHIFT_LD 42
-    // #define SHIFT_OUT 40
-    // #define SHIFT_EN 17
-
-    #define LCD_PINS_RS 16
-    #define LCD_PINS_ENABLE 17
-    #define LCD_PINS_D4 23
-    #define LCD_PINS_D5 25
-    #define LCD_PINS_D6 27
-    #define LCD_PINS_D7 29
+    #define BEEPER -1  // Beeper on AUX-4
+	#define BTN_EN1 31
+	#define BTN_EN2 33
+	#define BTN_ENC 35
   #endif
 #endif // ULTRA_LCD
 

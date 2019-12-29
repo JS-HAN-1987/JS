@@ -23,9 +23,11 @@
 #define BLEN_A 0
 #define BLEN_B 1
 #define BLEN_C 2
-#define EN_A (1<<BLEN_A)
-#define EN_B (1<<BLEN_B)
+
 #define EN_C (1<<BLEN_C)
+#define EN_B (1<<BLEN_B)
+#define EN_A (1<<BLEN_A)
+
 #define encrot0 0
 #define encrot1 2
 #define encrot2 3
@@ -47,24 +49,32 @@
 #endif
 */
 
+
 // DOGM parameters (size in pixels)
+#define LCD_PIXEL_WIDTH			320
+#define LCD_PIXEL_HEIGHT		240
 #define DOG_CHAR_WIDTH			12
 #define DOG_CHAR_HEIGHT			40
 #define DOG_CHAR_WIDTH_LARGE	12
-#define DOG_CHAR_HEIGHT_LARGE	24
+#define DOG_CHAR_HEIGHT_LARGE	40
 
 #define START_ROW				0
 
+#define STATUS_HEATERS_Y 6
+#define STATUS_FANS_Y 6
+#define STATUS_FR_Y 6 + DOG_CHAR_HEIGHT
+#define STATUS_LINE_Y LCD_PIXEL_HEIGHT - DOG_CHAR_HEIGHT
+
 /* Custom characters defined in font font_6x10_marlin.c */
-#define LCD_STR_DEGREE      "\xB0"
+//#define LCD_STR_DEGREE      "\xB0"
 #define LCD_STR_REFRESH     "\xF8"
 #define LCD_STR_FOLDER      "\xF9"
 #define LCD_STR_ARROW_RIGHT "\xFA"
 #define LCD_STR_UPLEVEL     "\xFB"
-#define LCD_STR_CLOCK       "\xFC"
-#define LCD_STR_FEEDRATE    "\xFD"
-#define LCD_STR_BEDTEMP     "\xFE"
-#define LCD_STR_THERMOMETER "\xFF"
+//#define LCD_STR_CLOCK       "\xFC"
+//#define LCD_STR_FEEDRATE    "\xFD"
+//#define LCD_STR_BEDTEMP     "\xFE"
+//#define LCD_STR_THERMOMETER "\xFF"
 
 //#define FONT_STATUSMENU	u8g_font_6x9
 
@@ -105,21 +115,19 @@ static void lcd_printPGM(const char* str)
 
 static void _draw_heater_status(int x, int heater) {
   bool isBed = heater < 0;
-  int y = 17 + (isBed ? 1 : 0);
+
+  int y = STATUS_HEATERS_Y;
   //u8g.setFont(FONT_STATUSMENU);
-  setPrintPos(x,6);
+
+  setPrintPos(x, y);
   tft_printstr(itostr3(int((heater >= 0 ? degTargetHotend(heater) : degTargetBed()) + 0.5)));
-  lcd_printPGM(PSTR(LCD_STR_DEGREE " "));
-  setPrintPos(x,27);
+  setPrintPos(x, y  + DOG_CHAR_HEIGHT);
   tft_printstr(itostr3(int(heater >= 0 ? degHotend(heater) : degBed()) + 0.5));
-  lcd_printPGM(PSTR(LCD_STR_DEGREE " "));
-  if (!isHeatingHotend(0)) {
-    drawBox(x+7,y,2,2, WHITE);
+  if (!isHeatingHotend(heater)) {
+    drawBox(x, y, DOG_CHAR_WIDTH*3, DOG_CHAR_HEIGHT, WHITE);
   }
   else {
-    //u8g.setColorIndex(0); // white on black
-    drawBox(x+7,y,2,2, WHITE);
-    //u8g.setColorIndex(1); // black on white
+    drawBox(x, y, DOG_CHAR_WIDTH*3, DOG_CHAR_HEIGHT, BLACK);
   }
 }
 
@@ -135,12 +143,12 @@ static void lcd_implementation_status_screen()
  
  #ifdef SDSUPPORT
  //SD Card Symbol
- drawBox(42,42,8,7, WHITE);
- drawBox(50,44,2,5, WHITE);
- drawBox(42,49,10,4, WHITE);
+ //drawBox(42,42,8,7, WHITE);
+ //drawBox(50,44,2,5, WHITE);
+ //drawBox(42,49,10,4, WHITE);
  //u8g.drawPixel(50,43);
  // Progress bar
- drawBox(54,49,73,4, WHITE);
+ //drawBox(54,49,73,4, WHITE);
  
  // SD Card Progress bar and clock
  //u8g.setFont(FONT_STATUSMENU);
@@ -154,7 +162,7 @@ static void lcd_implementation_status_screen()
 			// do nothing
 		 }
  
- setPrintPos(80,47);
+	setPrintPos(80,47);
  if(starttime != 0)
     {
         uint16_t time = millis()/60000 - starttime/60000;
@@ -177,11 +185,11 @@ static void lcd_implementation_status_screen()
   #endif
 
   // Heatbed
-  _draw_heater_status(81, -1);
+  //_draw_heater_status(81, -1);
  
  // Fan
  //u8g.setFont(FONT_STATUSMENU);
- setPrintPos(104,27);
+ setPrintPos(LCD_PIXEL_WIDTH - DOG_CHAR_WIDTH*5, STATUS_FANS_Y);
  #if defined(FAN_PIN) && FAN_PIN > -1
  tft_printstr(itostr3(int((fanSpeed*100)/256 + 1)));
  tft_printchar('%');
@@ -192,40 +200,39 @@ static void lcd_implementation_status_screen()
  
  // X, Y, Z-Coordinates
  //u8g.setFont(FONT_STATUSMENU);
- drawBox(0,29,128,10, WHITE);
+ //drawBox(0,29,128,10, WHITE);
  //u8g.setColorIndex(0);	// white on black
- setPrintPos(2,37);
- tft_printstr("X");
+ //setPrintPos(2,37);
+ //tft_printchar('X');
  //u8g.drawPixel(8,33);
  //u8g.drawPixel(8,35);
- setPrintPos(10,37);
- tft_printstr(ftostr31ns(current_position[X_AXIS]));
- setPrintPos(43,37);
- lcd_printPGM(PSTR("Y"));
+ //setPrintPos(10,37);
+ //tft_printstr(ftostr31ns(current_position[X_AXIS]));
+ //setPrintPos(43,37);
+ //lcd_printPGM(PSTR("Y"));
  //u8g.drawPixel(49,33);
  //u8g.drawPixel(49,35);
- setPrintPos(51,37);
- tft_printstr(ftostr31ns(current_position[Y_AXIS]));
- setPrintPos(83,37);
- tft_printchar('Z');
+ //setPrintPos(51,37);
+ //tft_printstr(ftostr31ns(current_position[Y_AXIS]));
+ //setPrintPos(83,37);
+ //tft_printchar('Z');
  //u8g.drawPixel(89,33);
  //u8g.drawPixel(89,35);
- setPrintPos(91,37);
- tft_printstr(ftostr31(current_position[Z_AXIS]));
+ //setPrintPos(91,37);
+ //tft_printstr(ftostr31(current_position[Z_AXIS]));
  //u8g.setColorIndex(1);	// black on white
  
  // Feedrate
  //u8g.setFont(u8g_font_6x10_marlin);
- setPrintPos(3,49);
- tft_printstr(LCD_STR_FEEDRATE);
+ setPrintPos(6, STATUS_FR_Y);
+ tft_printstr("F/R: ");
  //u8g.setFont(FONT_STATUSMENU);
- setPrintPos(12,48);
  tft_printstr(itostr3(feedmultiply));
  tft_printchar('%');
 
  // Status line
  //u8g.setFont(FONT_STATUSMENU);
- setPrintPos(0,61);
+ setPrintPos(6, STATUS_LINE_Y);
  #ifndef FILAMENT_LCD_DISPLAY
  tft_printstr(lcd_status_message);
  #else
@@ -244,27 +251,33 @@ static void lcd_implementation_status_screen()
 
 }
 
+#define Y_PADDING 20
 static void lcd_implementation_drawmenu_generic(uint8_t row, const char* pstr, char pre_char, char post_char)
 {
     char c;
     
     uint8_t n = LCD_WIDTH - 1 - 2;
 		
-		if ((pre_char == '>') || (pre_char == LCD_STR_UPLEVEL[0] ))
+		if (pre_char == '>')
 		   {
+			//SERIAL_ECHO("row: ");
+			//SERIAL_ECHOLN((int)row);
+			//serialprintPGM(pstr);
+			//SERIAL_ECHOLN("");
 			//u8g.setColorIndex(1);		// black on white
-			drawBox (0, row*DOG_CHAR_HEIGHT + 3, 128, DOG_CHAR_HEIGHT, WHITE);
+			drawBox (0, row*DOG_CHAR_HEIGHT + 3 + Y_PADDING, LCD_PIXEL_WIDTH, DOG_CHAR_HEIGHT, WHITE);
 			//u8g.setColorIndex(0);		// following text must be white on black
 		   } 
-		else drawBox(0, row * DOG_CHAR_HEIGHT + 3, 128, DOG_CHAR_HEIGHT, BLACK);
+		  else 
+			drawBox(0, row * DOG_CHAR_HEIGHT + 3 + Y_PADDING, LCD_PIXEL_WIDTH, DOG_CHAR_HEIGHT, BLACK);
 		
-		setPrintPos(0 * DOG_CHAR_WIDTH, (row + 1) * DOG_CHAR_HEIGHT);
-		   tft_printchar(pre_char == '>' ? ' ' : pre_char);	// Row selector is obsolete
+		setPrintPos(0 * DOG_CHAR_WIDTH, row * DOG_CHAR_HEIGHT + Y_PADDING);
+		tft_printchar(pre_char == '>' ? ' ' : pre_char);	// Row selector is obsolete
 
 
     while( (c = pgm_read_byte(pstr)) != '\0' )
     {
-		tft_printchar(c);
+		  tft_printchar(c);
         pstr++;
         n--;
     }
@@ -281,7 +294,7 @@ static void _drawmenu_setting_edit_generic(uint8_t row, const char* pstr, char p
   char c;
   uint8_t n = LCD_WIDTH - 1 - 2 - (pgm ? strlen_P(data) : strlen(data));
 		
-  setPrintPos(0 * DOG_CHAR_WIDTH, (row + 1) * DOG_CHAR_HEIGHT);
+  setPrintPos(0 * DOG_CHAR_WIDTH, row * DOG_CHAR_HEIGHT + Y_PADDING);
   tft_printchar(pre_char);
 
   while( (c = pgm_read_byte(pstr)) != '\0' ) {
@@ -359,18 +372,20 @@ static void _drawmenu_sd(uint8_t row, const char* pstr, const char* filename, ch
   }
 
   if (isSelected) {
-    //u8g.setColorIndex(1); // black on white
-    drawBox (0, row*DOG_CHAR_HEIGHT + 3, 128, DOG_CHAR_HEIGHT, WHITE);
-    //u8g.setColorIndex(0); // following text must be white on black
+    drawBox (0, row*DOG_CHAR_HEIGHT + 3 + Y_PADDING, LCD_PIXEL_WIDTH, DOG_CHAR_HEIGHT, WHITE);
+  }
+  else
+  {
+	  drawBox(0, row * DOG_CHAR_HEIGHT + 3+ Y_PADDING, LCD_PIXEL_WIDTH, DOG_CHAR_HEIGHT, BLACK);
   }
 
-  setPrintPos(0 * DOG_CHAR_WIDTH, (row + 1) * DOG_CHAR_HEIGHT);
+  setPrintPos(0 * DOG_CHAR_WIDTH, row * DOG_CHAR_HEIGHT+ Y_PADDING);
   tft_printchar(' ');	// Indent by 1 char
 
-  if (isDir) tft_printstr(LCD_STR_FOLDER);
+  if (isDir) tft_printstr((char *)LCD_STR_FOLDER);
 
   while((c = *filename) != '\0') {
-    tft_printstr(c);
+	  tft_printchar(c);
     filename++;
     n--;
   }
