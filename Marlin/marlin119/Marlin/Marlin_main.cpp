@@ -751,7 +751,8 @@ XYZ_CONSTS_FROM_CONFIG(signed char, home_dir, HOME_DIR);
  * ******************************** FUNCTIONS ********************************
  * ***************************************************************************
  */
-
+static void oc_probe_down(void);
+static void oc_probe_safety_check(void);
 void stop();
 
 void get_available_commands();
@@ -4312,6 +4313,9 @@ inline void gcode_G4() {
       do_blocking_move_to_z(Z_AFTER_PROBING);
       current_position[Z_AXIS] = Z_AFTER_PROBING;
     }
+
+    oc_probe_safety_check();
+    //do_blocking_move_to_xy(Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT);
   }
 #endif
 
@@ -4530,7 +4534,7 @@ inline void gcode_G28(const bool always_home_all) {
     #endif
 
     // Home Y (before X)
-    #if ENABLED(HOME_Y_BEFORE_X)
+    //#if ENABLED(HOME_Y_BEFORE_X)
 
       if (home_all || homeY
         #if ENABLED(CODEPENDENT_XY_HOMING)
@@ -4538,7 +4542,8 @@ inline void gcode_G28(const bool always_home_all) {
         #endif
       ) homeaxis(Y_AXIS);
 
-    #endif
+    //#endif
+    do_blocking_move_to_xy(current_position[X_AXIS], 190);
 
     // Home X
     if (home_all || homeX
@@ -4577,6 +4582,8 @@ inline void gcode_G28(const bool always_home_all) {
       if (home_all || homeY) homeaxis(Y_AXIS);
     #endif
 
+    oc_probe_down( );
+
     // Home Z last if homing towards the bed
     #if Z_HOME_DIR < 0
       if (home_all || homeZ) {
@@ -4596,7 +4603,7 @@ inline void gcode_G28(const bool always_home_all) {
     SYNC_PLAN_POSITION_KINEMATIC();
 
   #endif // !DELTA (gcode_G28)
-
+  
   endstops.not_homing();
 
   #if ENABLED(DELTA) && ENABLED(DELTA_HOME_TO_SAFE_ZONE)
@@ -4977,6 +4984,7 @@ void home_all_axes() { gcode_G28(true); }
 
     // Don't allow auto-leveling without homing first
     if (axis_unhomed_error()) return;
+    oc_probe_down();
 
     if (!no_action && planner.leveling_active && parser.boolval('O')) { // Auto-level only if needed
       #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -15198,16 +15206,16 @@ void stop() {
  *  - Print startup messages and diagnostics
  *  - Get EEPROM or default settings
  *  - Initialize managers for:
- *    • temperature
- *    • planner
- *    • watchdog
- *    • stepper
- *    • photo pin
- *    • servos
- *    • LCD controller
- *    • Digipot I2C
- *    • Z probe sled
- *    • status LEDs
+ *    ??temperature
+ *    ??planner
+ *    ??watchdog
+ *    ??stepper
+ *    ??photo pin
+ *    ??servos
+ *    ??LCD controller
+ *    ??Digipot I2C
+ *    ??Z probe sled
+ *    ??status LEDs
  */
 void setup() {
 
@@ -15549,4 +15557,34 @@ void loop() {
   }
   endstops.event_handler();
   idle();
+}
+
+
+static void oc_probe_down(void)
+{
+  do_blocking_move_to_z(25);
+  do_blocking_move_to_xy(0, current_position[Y_AXIS]);
+  do_blocking_move_to_xy(0, Y_MAX_POS);
+}
+
+bool oc_endstop_triggered_z(void)
+{
+  #if defined(Z_MIN_PIN) && Z_MIN_PIN > -1
+  return ((READ(Z_MIN_PIN)^Z_MIN_ENDSTOP_INVERTING)?true:false);
+  #endif
+  return false;
+}
+
+
+static void oc_probe_safety_check(void)
+{
+  do_blocking_move_to_z(20);
+  delay(1000); 
+  if (!oc_endstop_triggered_z()) {
+    //otm_event(EVENT_PROBE_ERROR, 0, 0);
+    delay(1000);
+    while (!oc_endstop_triggered_z()) ;
+    //otm_event(EVENT_PROBE_ERROR_RESOLVED, 0, 0);
+    //while (!otm_user_confirmed_probe_error()) lcd_update(LUT_ERROR_RESOLVED);;
+  }
 }
