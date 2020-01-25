@@ -1,1 +1,0 @@
-#define report_status_message orig_report_status_message
