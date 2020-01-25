@@ -111,7 +111,7 @@ uint8_t read_float(char *line, uint8_t *char_counter, float *float_ptr)
 // Non-blocking delay function used for general operation and suspend features.
 void delay_sec(float seconds, uint8_t mode)
 {
- 	uint16_t i = ceil(1000/DWELL_TIME_STEP*seconds);
+ 	uint16_t i = ceilf(1000/DWELL_TIME_STEP*seconds);
 	while (i-- > 0) {
 		if (sys.abort) { return; }
 		if (mode == DELAY_MODE_DWELL) {
@@ -158,7 +158,7 @@ void delay_us(uint32_t us)
 
 
 // Simple hypotenuse computation function.
-float hypot_f(float x, float y) { return(sqrt(x*x + y*y)); }
+float hypot_f(float x, float y) { return(sqrtf(x*x + y*y)); }
 
 
 float convert_delta_vector_to_unit_vector(float *vector)
