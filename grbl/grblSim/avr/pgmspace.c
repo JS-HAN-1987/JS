@@ -23,7 +23,7 @@
 char pgm_read_byte_near(const char* s) {
   return s[0];
 }
-
+#define NULL ((void *)0)
 //also memory related stuff
 int *__brkval = NULL;
 int __heap_start = 0;

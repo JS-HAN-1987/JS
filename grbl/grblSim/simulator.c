@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "../grbl.h"
 #include "simulator.h"
 #include "avr/eeprom.h"
 #include "avr/io.h"
@@ -69,9 +70,6 @@ void simulate_hardware(bool do_serial){
   sim.sim_time = (float)sim.masterclock/F_CPU;
 
   timer_interrupts();
-  
-  if (do_serial) simulate_serial();
-
   //TODO:
   //  check limit pins,  call pinchange interrupt if enabled
   //  can ignore pinout int vect - hw start/hold not supported

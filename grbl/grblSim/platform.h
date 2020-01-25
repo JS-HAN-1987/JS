@@ -1,12 +1,6 @@
 #ifndef platform_h
 
-#ifdef  PLAT_LINUX
-#include "platform_linux.h"
-#elif  PLAT_OSX
-#include "platform_osx.h"
-#else
 #include "platform_windows.h"
-#endif
 
 #define platform_h
 #include <inttypes.h>
