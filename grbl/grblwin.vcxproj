@@ -14,6 +14,7 @@
     <ProjectGuid>{8785D33C-F44C-44FA-9A16-0C93B895F459}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>grblwin</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -41,7 +42,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>j:\buildoutput\grblwin11\Debug\</OutDir>
+    <OutDir>.\debug\</OutDir>
     <IntDir>$(OutDir)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -104,24 +105,24 @@
     <ClInclude Include="..\grbl\system.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\grbl\coolant_control.c" />
-    <ClCompile Include="..\grbl\eeprom.c" />
-    <ClCompile Include="..\grbl\gcode.c" />
-    <ClCompile Include="..\grbl\jog.c" />
-    <ClCompile Include="..\grbl\limits.c" />
-    <ClCompile Include="..\grbl\main.c" />
-    <ClCompile Include="..\grbl\motion_control.c" />
-    <ClCompile Include="..\grbl\nuts_bolts.c" />
-    <ClCompile Include="..\grbl\planner.c" />
-    <ClCompile Include="..\grbl\print.c" />
-    <ClCompile Include="..\grbl\probe.c" />
-    <ClCompile Include="..\grbl\protocol.c" />
-    <ClCompile Include="..\grbl\report.c" />
-    <ClCompile Include="..\grbl\serial.c" />
-    <ClCompile Include="..\grbl\settings.c" />
-    <ClCompile Include="..\grbl\spindle_control.c" />
-    <ClCompile Include="..\grbl\stepper.c" />
-    <ClCompile Include="..\grbl\system.c" />
+    <ClCompile Include="coolant_control.c" />
+    <ClCompile Include="eeprom.c" />
+    <ClCompile Include="gcode.c" />
+    <ClCompile Include="jog.c" />
+    <ClCompile Include="limits.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="motion_control.c" />
+    <ClCompile Include="nuts_bolts.c" />
+    <ClCompile Include="planner.c" />
+    <ClCompile Include="print.c" />
+    <ClCompile Include="probe.c" />
+    <ClCompile Include="protocol.c" />
+    <ClCompile Include="report.c" />
+    <ClCompile Include="serial.c" />
+    <ClCompile Include="settings.c" />
+    <ClCompile Include="spindle_control.c" />
+    <ClCompile Include="stepper.c" />
+    <ClCompile Include="system.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

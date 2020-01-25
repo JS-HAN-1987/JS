@@ -1,6 +1,6 @@
 /*
-  config.h - replacement for the include of the same name in grbl
-  to define dummy registers
+  pgmspace.c - replacement for the avr library of the same name to provide
+  dummy functions
 
   Part of Grbl Simulator
 
@@ -20,16 +20,10 @@
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef config_h
-#define __flash
-// Include grbl's system.h, not its config.h, 
-// because of circular dependency (config.h includes system.h which includes config.h).
-// This way ensures that the CPU Map and other config flags are set before they are needed
-#include "../system.h"
+char pgm_read_byte_near(const char* s) {
+  return s[0];
+}
 
-
-
-#endif
-
-
-
+//also memory related stuff
+int *__brkval = NULL;
+int __heap_start = 0;

@@ -1,6 +1,5 @@
 /*
-  config.h - replacement for the include of the same name in grbl
-  to define dummy registers
+  sleep.h - dummy replacement for the avr include of the same name
 
   Part of Grbl Simulator
 
@@ -19,17 +18,4 @@
   You should have received a copy of the GNU General Public License
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef config_h
-#define __flash
-// Include grbl's system.h, not its config.h, 
-// because of circular dependency (config.h includes system.h which includes config.h).
-// This way ensures that the CPU Map and other config flags are set before they are needed
-#include "../system.h"
-
-
-
-#endif
-
-
-
+ 

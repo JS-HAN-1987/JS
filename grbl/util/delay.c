@@ -1,10 +1,11 @@
 /*
-  config.h - replacement for the include of the same name in grbl
-  to define dummy registers
+  delay.c - replacement for the avr library of the same name to provide
+  dummy functions
 
   Part of Grbl Simulator
 
   Copyright (c) 2012 Jens Geisler
+  Copyright (c) 2015 Adam Shelly
 
   Grbl is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,16 +21,13 @@
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef config_h
-#define __flash
-// Include grbl's system.h, not its config.h, 
-// because of circular dependency (config.h includes system.h which includes config.h).
-// This way ensures that the CPU Map and other config flags are set before they are needed
-#include "../system.h"
+#include "platform.h"
+#include "../simulator.h"
 
+void _delay_ms(int i) {
+  platform_sleep(i*1000/sim.speedup);
+}
 
-
-#endif
-
-
-
+void _delay_us(int i) {
+  platform_sleep(i/sim.speedup);
+}

@@ -83,58 +83,58 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\grbl\coolant_control.c">
+    <ClCompile Include="coolant_control.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\eeprom.c">
+    <ClCompile Include="eeprom.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\gcode.c">
+    <ClCompile Include="gcode.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\jog.c">
+    <ClCompile Include="jog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\limits.c">
+    <ClCompile Include="limits.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\main.c">
+    <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\motion_control.c">
+    <ClCompile Include="motion_control.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\nuts_bolts.c">
+    <ClCompile Include="nuts_bolts.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\planner.c">
+    <ClCompile Include="planner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\print.c">
+    <ClCompile Include="print.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\probe.c">
+    <ClCompile Include="probe.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\protocol.c">
+    <ClCompile Include="protocol.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\report.c">
+    <ClCompile Include="report.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\serial.c">
+    <ClCompile Include="serial.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\settings.c">
+    <ClCompile Include="settings.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\spindle_control.c">
+    <ClCompile Include="spindle_control.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\stepper.c">
+    <ClCompile Include="stepper.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\grbl\system.c">
+    <ClCompile Include="system.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

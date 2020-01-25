@@ -1,6 +1,6 @@
 /*
-  config.h - replacement for the include of the same name in grbl
-  to define dummy registers
+  delay.h - replacement for the avr include of the same name to provide
+  dummy functions
 
   Part of Grbl Simulator
 
@@ -20,16 +20,10 @@
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef config_h
-#define __flash
-// Include grbl's system.h, not its config.h, 
-// because of circular dependency (config.h includes system.h which includes config.h).
-// This way ensures that the CPU Map and other config flags are set before they are needed
-#include "../system.h"
+#ifndef delay_h
+#define delay_h
 
-
+void _delay_ms(int i);
+void _delay_us(int i);
 
 #endif
-
-
-
