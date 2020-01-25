@@ -77,6 +77,10 @@ int main(int argc, char *argv[]) {
   // step_time= 0.0; This means to not print stepper values at all
 
   progname = argv[0];
+#ifdef WIN32
+  winserial_init(argv[1]);
+#endif
+
   while (argc>1) {
     argv++;argc--;
     if (argv[0][0] == '-'){

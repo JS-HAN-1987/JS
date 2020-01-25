@@ -30,25 +30,12 @@ CRITICAL_SECTION CriticalSection;
 HANDLE hSerial = INVALID_HANDLE_VALUE;
 void RecvthreadFunction( void *);
 void SendthreadFunction( void *);
-
-#endif
-#ifdef STM32F103C8
-#include "stm32f10x.h"
-#include "core_cm3.h"
-#ifndef USEUSB
-#include "stm32f10x_usart.h"
-#else
-#include "usb_regs.h"
-#endif
 #endif
 
-#if !defined(STM32F103C8)
-#define RX_RING_BUFFER (RX_BUFFER_SIZE+1)
-#define TX_RING_BUFFER (TX_BUFFER_SIZE+1)
-#else
+
+
 #define RX_RING_BUFFER (RX_BUFFER_SIZE)
 #define TX_RING_BUFFER (TX_BUFFER_SIZE)
-#endif
 
 uint8_t serial_rx_buffer[RX_RING_BUFFER];
 uint8_t serial_rx_buffer_head = 0;
@@ -173,13 +160,7 @@ void winserial_init(char *pPort)
 void serial_write(uint8_t data) {
   // Calculate next head
   uint8_t next_head = serial_tx_buffer_head + 1;
-  #ifdef STM32F103C8
-#ifndef USEUSB
-	USART_SendData(USART1, data);
-	while (!(USART1->SR & USART_FLAG_TXE));		 //等待发送完成
-    return;
-#endif
-#endif
+
   if (next_head == TX_RING_BUFFER) { next_head = 0; }
 
   // Wait until there is space in the buffer
@@ -283,14 +264,15 @@ uint8_t serial_read()
     return SERIAL_NO_DATA;
   } else {
     uint8_t data = serial_rx_buffer[tail];
-
-    tail++;
+	tail++;
     if (tail == RX_RING_BUFFER) { tail = 0; }
     serial_rx_buffer_tail = tail;
 
     return data;
   }
 }
+
+
 
 #ifdef AVRTARGET
 ISR(SERIAL_RX)
@@ -323,42 +305,40 @@ void RecvthreadFunction(void *pVoid )
         }
         else
         {
-            while (_kbhit() == 0)
-                ;
-            data = _getch();
+			char str[128];
+			fgets(str, sizeof(str), stdin);
+			int len = strlen(str);
+			//str[++len] = '\n';
+			int i;
+			for (i = 0; i < len; i++)
+			{
+				next_head = serial_rx_buffer_head + 1;
+				if (next_head == RX_RING_BUFFER) { next_head = 0; }
+
+				// Write data to buffer unless it is full.
+				if (next_head != serial_rx_buffer_tail) {
+					serial_rx_buffer[serial_rx_buffer_head] = str[i];
+					serial_rx_buffer_head = next_head;
+				}
+			}
+			continue;
+			//while (_kbhit() == 0);
+            //data = _getch();
+			//if (data == '\b')
+			//{
+			//	printf("\b \b");
+			//	if (serial_rx_buffer_head > serial_rx_buffer_tail)
+			//		--serial_rx_buffer_head;
+			//	else
+			//		serial_rx_buffer_head = RX_RING_BUFFER - 1;
+			//	continue;
+			//}
+			//printf("%c", data);
         }
          if (data == 0)
              continue;
 #endif
-#ifdef STM32F103C8
-#ifdef USEUSB
-void OnUsbDataRx(uint8_t* dataIn, uint8_t length)
-{
-	//lcd_write_char(*dataIn);
-	uint8_t next_head;
-    uint8_t data;
 
-	// Write data to buffer unless it is full.
-	while (length != 0)
-	{
-        data = *dataIn ++;
-#else
-/*----------------------------------------------------------------------------
-  USART1_IRQHandler
-  Handles USART1 global interrupt request.
- *----------------------------------------------------------------------------*/
-void USART1_IRQHandler (void) 
-{
-    volatile unsigned int IIR;
-    uint8_t data;
-    uint8_t next_head;
-
-    IIR = USART1->SR;
-    if (IIR & USART_FLAG_RXNE) 
-    {                  // read interrupt
-        data = USART1->DR & 0x1FF;
-#endif
-#endif
   // Pick off realtime command characters directly from the serial stream. These characters are
   // not passed into the main buffer, but these set system state flag bits for realtime execution.
   switch (data) {
@@ -412,17 +392,10 @@ void USART1_IRQHandler (void)
 #ifdef WIN32
     }
 #endif
-#ifdef STM32F103C8
-#ifndef USEUSB
-        USART1->SR &= ~USART_FLAG_RXNE;	          // clear interrupt
-#else
-    length--;
-#endif
-   }
-#endif
 }
 
 void serial_reset_read_buffer()
 {
   serial_rx_buffer_tail = serial_rx_buffer_head;
 }
+
