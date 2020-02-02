@@ -556,7 +556,7 @@ class Temperature {
     FORCE_INLINE static float degHotend(const uint8_t E_NAME) {
       return (0
         #if HOTENDS
-          + temp_hotend[HOTEND_INDEX].celsius
+          + 200//temp_hotend[HOTEND_INDEX].celsius
         #endif
       );
     }

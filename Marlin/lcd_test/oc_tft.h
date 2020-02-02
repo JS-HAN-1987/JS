@@ -50,6 +50,7 @@
 #define OC_TRANSPARENT_BACK 0x0001 // for tft_printf
 
 void tft_init(void);
+void tft_reset(void);
 void tft_on(void);
 void tft_off(void);
 void tft_fillrect(int x, int y, int w, int h, uint16_t color);

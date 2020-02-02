@@ -525,37 +525,37 @@ void MarlinUI::draw_status_screen() {
         #endif
       }
 
-      if (ev != lastElapsed) {
-        lastElapsed = ev;
-        const bool has_days = (elapsed.value >= 60*60*24L);
-        const uint8_t len = elapsed.toDigital(elapsed_string, has_days);
-        elapsed_x_pos = _SD_INFO_X(len);
+      //if (ev != lastElapsed) {
+      //  lastElapsed = ev;
+      //  const bool has_days = (elapsed.value >= 60*60*24L);
+      //  const uint8_t len = elapsed.toDigital(elapsed_string, has_days);
+      //  elapsed_x_pos = _SD_INFO_X(len);
 
-        #if ENABLED(SHOW_REMAINING_TIME)
-          if (!(ev & 0x3)) {
-            uint32_t timeval = (0
-              #if BOTH(LCD_SET_PROGRESS_MANUALLY, USE_M73_REMAINING_TIME)
-                + get_remaining_time()
-              #endif
-            );
-            if (!timeval && progress > 0) timeval = elapsed.value * (100 * (PROGRESS_SCALE) - progress) / progress;
-            if (!timeval) {
-              estimation_string[0] = '\0';
-              estimation_x_pos = _SD_INFO_X(0);
-            }
-            else {
-              duration_t estimation = timeval;
-              const bool has_days = (estimation.value >= 60*60*24L);
-              const uint8_t len = estimation.toDigital(estimation_string, has_days);
-              estimation_x_pos = _SD_INFO_X(len
-                #if !BOTH(DOGM_SD_PERCENT, ROTATE_PROGRESS_DISPLAY)
-                  + 1
-                #endif
-              );
-            }
-          }
-        #endif
-      }
+      //  #if ENABLED(SHOW_REMAINING_TIME)
+      //    if (!(ev & 0x3)) {
+      //      uint32_t timeval = (0
+      //        #if BOTH(LCD_SET_PROGRESS_MANUALLY, USE_M73_REMAINING_TIME)
+      //          + get_remaining_time()
+      //        #endif
+      //      );
+      //      if (!timeval && progress > 0) timeval = elapsed.value * (100 * (PROGRESS_SCALE) - progress) / progress;
+      //      if (!timeval) {
+      //        estimation_string[0] = '\0';
+      //        estimation_x_pos = _SD_INFO_X(0);
+      //      }
+      //      else {
+      //        duration_t estimation = timeval;
+      //        const bool has_days = (estimation.value >= 60*60*24L);
+      //        const uint8_t len = estimation.toDigital(estimation_string, has_days);
+      //        estimation_x_pos = _SD_INFO_X(len
+      //          #if !BOTH(DOGM_SD_PERCENT, ROTATE_PROGRESS_DISPLAY)
+      //            + 1
+      //          #endif
+      //        );
+      //      }
+      //    }
+      //  #endif
+      //}
     #endif
   }
   
@@ -646,13 +646,13 @@ void MarlinUI::draw_status_screen() {
 		}
 		if (progress_string[0]) {
 			lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE - INFO_FONT_HEIGHT, progress_string);
-			lcd_put_wchar('%');
+			//lcd_put_wchar('%');
 		}
 
-		if (estimation_string[0]) {
-		   lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "R:");
-		   lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, estimation_string);
-		}
+		//if (estimation_string[0]) {
+		//   lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 2, EXTRAS_2_BASELINE, "R:");
+		//   lcd_put_u8str(PROGRESS_BAR_X + INFO_FONT_WIDTH * 4, EXTRAS_2_BASELINE, estimation_string);
+		//}
 			   		 
    //     if (progress_state == 0) {
 			//if (progress_string[0]) {

@@ -33,6 +33,10 @@ void tft_enable(bool enable)
 	//tft_enable_ = enable;
 }
 
+void tft_reset(void)
+{
+  tft.reset();
+}
 
 
 

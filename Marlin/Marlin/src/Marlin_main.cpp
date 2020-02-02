@@ -652,7 +652,6 @@ void idle(
   #if ENABLED(MAX7219_DEBUG)
     max7219.idle_tasks();
   #endif
-
   ui.update();
 
   #if ENABLED(HOST_KEEPALIVE_FEATURE)

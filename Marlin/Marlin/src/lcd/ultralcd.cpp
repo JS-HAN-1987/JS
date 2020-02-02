@@ -574,7 +574,7 @@ void MarlinUI::status_screen() {
   #endif
 
   #if ENABLED(ULTIPANEL_FEEDMULTIPLY)
-	if (printingIsPaused())
+//	if (printingIsPaused())
 	{
 		const int16_t old_frm = feedrate_percentage;
 		int16_t new_frm = old_frm + int16_t(encoderPosition);
@@ -1023,10 +1023,12 @@ void MarlinUI::update() {
 
     // then we want to use 1/2 of the time only.
     uint16_t bbr2 = planner.block_buffer_runtime() >> 1;
-    if ((should_draw() || drawing_screen) && (!bbr2 || bbr2 > max_display_update_time)) {
+	bool bDraw = (should_draw() || drawing_screen) && (!bbr2 || bbr2 > max_display_update_time);
+	if (bDraw) {
 
       // Change state of drawing flag between screen updates
-      if (!drawing_screen) switch (lcdDrawUpdate) {
+      if (!drawing_screen) 
+		switch (lcdDrawUpdate) {
         case LCDVIEW_CALL_NO_REDRAW:
           refresh(LCDVIEW_NONE);
           break;
@@ -1061,7 +1063,11 @@ void MarlinUI::update() {
           }
           //set_font(FONT_MENU);                  // Setup font for every page draw
           //u8g.setColorIndex(1);                 // And reset the color
+		  //SERIAL_ECHO("run_current_screen ");
+		  //millis_t t1 = millis();
           run_current_screen();                 // Draw and process the current screen
+		  //millis_t diff = millis() - t1;
+		  //SERIAL_ECHOLN(diff);
           first_page = false;
 
           // The screen handler can clear drawing_screen for an action that changes the screen.
@@ -1230,7 +1236,8 @@ void MarlinUI::update() {
           #if BUTTON_EXISTS(BACK)
             if (BUTTON_PRESSED(BACK)) newbutton |= EN_D;
           #endif
-
+			SERIAL_ECHO("newbutton: ");
+			SERIAL_ECHOLN((int)newbutton);
         #else
 
           constexpr uint8_t newbutton = 0;
